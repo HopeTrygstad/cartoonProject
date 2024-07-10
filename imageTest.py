@@ -6,7 +6,7 @@ from openai import OpenAI
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
 image_directory = 'Face_extraction'
-api_key = '***REMOVED***'
+api_key = os.getenv('OPENAI_API_KEY')
 model = "gpt-4o"
 
 # Function to read the first row from the CSV file
