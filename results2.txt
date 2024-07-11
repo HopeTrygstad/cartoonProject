@@ -29,7 +29,7 @@ Processed 27.jpg - Correct: True
 Processed 28.jpg - Correct: True
 Processed 29.jpg - Correct: True
 Processed 30.jpg - Correct: True
-Processed 31.jpg - Correct: False
+Processed 31.jpg - Correct: True
 Processed 32.jpg - Correct: True
 Processed 33.jpg - Correct: False
 Processed 34.jpg - Correct: False
@@ -103,8 +103,14 @@ Processed 101.jpg - Correct: False
 Processed 102.jpg - Correct: True
 Processed 103.jpg - Correct: True
 Processed 104.jpg - Correct: True
-Processed 105.jpg - Correct: False
+Processed 105.jpg - Correct: True
 
-All Detected Emotions: [['Happiness', 'Surprise'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness', 'Contempt'], ['Anger'], ['Anger', 'Disgust'], ['Anger'], ['Anger'], ['Anger'], ['Anger', 'Contempt'], ['Anger', 'Disgust'], ['Anger'], ['Anger', 'Disgust'], ['Anger'], ['Anger', 'Contempt'], ['Anger', 'Contempt'], ['Anger'], ['Anger', 'Surprise'], ['Anger', 'Contempt'], ['Fear'], ['Fear', 'Sadness'], ['Anger', 'Fear'], ['Surprise'], ['Sadness'], ['Sadness'], ['Sadness'], ['Sadness'], ['Surprise'], ['Sadness'], ['Disgust', 'Anger'], ['Sadness', 'Surprise'], ['Sadness'], ['Sadness'], ['Worry', 'Sadness'], ['Fear'], ['Fear'], ['Fear'], ['Fear'], ['Surprise'], ['Fear', 'Surprise'], ['Surprise'], ['Fear'], ['Fear'], ['Fear', 'Surprise'], ['Fear'], ['Fear'], ['Fear'], ['Surprise'], ['Fear'], ['Surprise', 'Fear'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise', 'Fear'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise', 'Fear'], ['Surprise', 'Anger'], ['Surprise'], ['Surprise'], ['Surprise'], ['Happiness', 'Surprise'], ['Surprise'], ['Disgust', 'Fear'], ['Fear', 'Surprise'], ['Surprise'], ['Disgust'], ['Disgust', 'Surprise'], ['Anger'], ['Disgust', 'Fear'], ['Disgust', 'Sadness'], ['Disgust', 'Confusion'], ['Disgust', 'Anger'], ['Disgust', 'Surprise'], ['Disgust'], ['Disgust'], ['Surprise', 'Fear'], ['Disgust'], ['Disgust', 'Contempt'], ['Disgust', 'Contempt'], ['Anger', 'Contempt'], ['Disgust', 'Contempt'], ['Disgust', 'Anger'], ['Sadness'], ['Disgust'], ['Contempt'], ['Contempt'], ['Contempt'], ['Anger'], ['Disgust', 'Contempt'], ['Anger'], ['Anger', 'Disgust'], ['Disgust']]
-Total Correct Identifications: 90/105
-Percentage of Correct Identifications: 85.71%
+All Detected Emotions: [['Happiness', 'Surprise'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness'], ['Happiness', 'Contempt'], 
+['Anger', 'Disgust'], ['Anger', 'Disgust'], ['Anger'], ['Anger'], ['Anger'], ['Anger', 'Contempt'], ['Anger', 'Disgust'], ['Anger'], ['Anger', 'Disgust'], ['Anger', 'Surprise'], ['Anger', 'Contempt'], ['Anger', 'Contempt'], ['Anger'], ['Anger', 'Determination'], ['Anger', 'Contempt'], 
+['Fear'], ['Fear', 'Sadness'], ['Anger', 'Pain'], ['Surprise'], ['Sadness'], ['Sadness'], ['Sadness'], ['Sadness'], ['Surprise'], ['Sadness'], ['Anger', 'Disgust'], ['Sadness', 'Surprise'], ['Sadness'], ['Sadness'], ['Worry', 'Sadness'], 
+['Fear'], ['Fear'], ['Fear'], ['Fear'], ['Surprise', 'Fear'], ['Fear'], ['Surprise'], ['Fear'], ['Fear'], ['Fear'], ['Fear'], ['Fear'], ['Fear'], ['Surprise'], ['Fear'],
+ ['Surprise', 'Fear'], ['Happiness', 'Surprise'], ['Surprise'], ['Surprise'], ['Surprise', 'Fear'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise', 'Fear'], ['Surprise', 'Anger'], ['Surprise'], ['Surprise'], ['Surprise'], ['Happiness', 'Surprise'], ['Surprise'], 
+ ['Sadness', 'Disgust'], ['Fear'], ['Surprise'], ['Disgust'], ['Disgust', 'Fear'], ['Anger'], ['Disgust', 'Fear'], ['Disgust', 'Sadness'], ['Disgust', 'Anger'], ['Disgust', 'Anger'], ['Disgust', 'Surprise'], ['Disgust'], ['Disgust'], ['Surprise'], ['Disgust'], 
+ ['Contempt'], ['Disgust', 'Contempt'], ['Contempt'], ['Disgust', 'Contempt'], ['Disgust', 'Anger'], ['Sadness'], ['Disgust'], ['Contempt'], ['Contempt'], ['Contempt'], ['Anger'], ['Disgust', 'Contempt'], ['Anger', 'Disgust'], ['Anger'], ['Contempt']]
+Total Correct Identifications: 92/105
+Percentage of Correct Identifications: 87.62%
