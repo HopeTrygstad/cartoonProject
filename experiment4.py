@@ -52,7 +52,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
-        emotions_list = [emotion.strip() for emotion in response.split() if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
+        emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
 
         return emotions_list
     except Exception as e:
