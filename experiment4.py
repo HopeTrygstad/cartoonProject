@@ -1,6 +1,5 @@
 import csv
 import os
-import requests
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
@@ -39,26 +38,23 @@ def get_emotion(image_path, corresponding_text, same_character):
     try:
         image = Image.open(image_path)
         prompt = (
-            "[INST] <image>\n"
-            "Here is some text and an image. They are taken from a cartoon.\n"
-            "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
-            "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
+            f"[INST] <image>\nHere is some text and an image. They are taken from a cartoon.\n"
+            f"Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
+            f"Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
+            f"Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
             f"Text: {corresponding_text}\n"
             f"Said by same character?: {same_character} [/INST]"
         )
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_length=50)
-        response = processor.decode(outputs[0], skip_special_tokens=True)
+        outputs = model.generate(**inputs, max_new_tokens=100)  # Use max_new_tokens for better control
 
-        # Extract emotions from the response
+        response = processor.decode(outputs[0], skip_special_tokens=True)
         emotions = response.split('[/INST]')[-1].strip().split(',')
         emotions_list = [emotion.strip() for emotion in emotions]
         return emotions_list
     except Exception as e:
-        print(f"Error during emotion generation: {e}")
-        return ["Error"]
+        return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
@@ -72,7 +68,6 @@ try:
     correct_count = 0
 
     with open(output_file_path, "w") as results_file:
-        # Print the column headers to debug
         if rows:
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
 
@@ -81,19 +76,19 @@ try:
             corresponding_text = row.get('Corresponding Text', '').strip()
             same_character = row.get('Said by same character?', '').strip()
             annotation = row.get('Annotation', '').strip()
-            
+
             if not image_name or not corresponding_text or not annotation:
                 results_file.write(f"Skipping row due to missing data: {row}\n")
                 continue
-            
+
             image_path = get_image_path(image_directory, image_name)
             identified_emotions = get_emotion(image_path, corresponding_text, same_character)
             all_emotions.append(identified_emotions)
-            
+
             is_correct = check_correctness(identified_emotions, annotation)
             if is_correct:
                 correct_count += 1
-            
+
             results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
 
         total_rows = len(rows)
