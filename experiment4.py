@@ -40,7 +40,10 @@ def get_emotion(image_path, corresponding_text, same_character):
         prompt = (
             "[INST] <image>\n"
             "Here is some text and an image. They are taken from a cartoon.\n"
-            "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
+            "The image is a frame from the cartoon showing a character's face.\n"
+            "The text is the dialogue being said at the time the frame was taken.\n"
+            "'Said by same character?' indicates if the text was said by the character in the image.\n"
+            "Your task is to label the image with a maximum of two of the following emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
             f"Text: \"{corresponding_text}\"\n"
@@ -53,9 +56,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
-        emotions_text = re.findall(r'(?<=\[INST\] ).*?(?=\[/INST\])', response, re.DOTALL)
-        emotions_list = [emotion.strip() for emotion in emotions_text if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
-
+        emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
         return emotions_list
     except Exception as e:
         return [f"Error: {e}"]
