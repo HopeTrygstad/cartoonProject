@@ -52,11 +52,12 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=150)
+        outputs = model.generate(**inputs, max_new_tokens=50)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
-        emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
+        emotions_text = re.findall(r'(?<=\[INST\] ).*?(?=\[/INST\])', response, re.DOTALL)
+        emotions_list = [emotion.strip() for emotion in emotions_text if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
 
         return emotions_list
     except Exception as e:
