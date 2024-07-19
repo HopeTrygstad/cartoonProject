@@ -39,12 +39,13 @@ def get_emotion(image_path, corresponding_text, same_character):
         image = Image.open(image_path)
         prompt = (
             "[INST] <image>\n"
-            "You will be given an image and some text from a cartoon.\n"
-            "The image is a frame from the cartoon showing a character's face.\n"
-            "The text is the dialogue being said during the cartoon at the time the frame was taken.\n"
-            "'Said by same character?' indicates if the text was said by the character in the image.\n"
-            "Your task is to identify the emotion or emotions (maximum of two) displayed by the character in the image. Choose from the following emotions: "
+            "Here is some text and an image. They are taken from a cartoon.\n"
+            "The image is a frame from the cartoon with a character's face on it.\n"
+            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
+            "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
+            "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
+            "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
             "[/INST]"
@@ -55,7 +56,8 @@ def get_emotion(image_path, corresponding_text, same_character):
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
-        emotions_list = re.findall(r'\b(?:Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
+        emotions_text = re.findall(r'(?<=\[INST\] ).*?(?=\[/INST\])', response, re.DOTALL)
+        emotions_list = [emotion.strip() for emotion in emotions_text if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
 
         return emotions_list
     except Exception as e:
