@@ -17,6 +17,7 @@ processor = LlavaNextProcessor.from_pretrained("llava-hf/llava-v1.6-mistral-7b-h
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
 image_directory = 'Face_extraction'
+output_file_path = 'LlaVaResults.txt'
 
 # Function to read all rows from the CSV file
 def get_all_rows(csv_file_path):
@@ -36,7 +37,6 @@ def get_image_path(image_directory, image_name):
 # Function to prompt LLaVa-Next with the image and text
 def get_emotion(image_path, corresponding_text, same_character):
     try:
-        print(f"Opening image: {image_path}")
         image = Image.open(image_path)
         prompt = (
             "[INST] <image>\n"
@@ -47,16 +47,14 @@ def get_emotion(image_path, corresponding_text, same_character):
             f"Text: {corresponding_text}\n"
             f"Said by same character?: {same_character} [/INST]"
         )
-        print(f"Prompt: {prompt}")
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-
-        outputs = model.generate(**inputs, max_new_tokens=100)
-
+        outputs = model.generate(**inputs, max_length=50)
         response = processor.decode(outputs[0], skip_special_tokens=True)
-        print(f"Response: {response}")
 
-        emotions_list = [emotion.strip() for emotion in response.split(',')]
+        # Extract emotions from the response
+        emotions = response.split('[/INST]')[-1].strip().split(',')
+        emotions_list = [emotion.strip() for emotion in emotions]
         return emotions_list
     except Exception as e:
         print(f"Error during emotion generation: {e}")
@@ -73,10 +71,9 @@ try:
     all_emotions = []
     correct_count = 0
 
-    with open("LlaVaResults.txt", "w") as results_file:
+    with open(output_file_path, "w") as results_file:
         # Print the column headers to debug
         if rows:
-            print("Column headers:", rows[0].keys())
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
 
         for i, row in enumerate(rows, 1):
@@ -107,5 +104,5 @@ try:
         results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
 
 except Exception as e:
-    with open("LlaVaResults.txt", "w") as results_file:
+    with open(output_file_path, "w") as results_file:
         results_file.write(f"Error: {e}\n")
