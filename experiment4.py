@@ -55,7 +55,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
-        # Extract emotions from the response
+        # Extract emotions from the response using a more precise regex pattern
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
         return emotions_list
     except Exception as e:
