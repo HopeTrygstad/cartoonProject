@@ -39,20 +39,16 @@ def get_emotion(image_path, corresponding_text, same_character):
         image = Image.open(image_path)
         prompt = (
             "[INST] <image>\n"
-            "Here is some text and an image. They are taken from a cartoon.\n"
-            "The image is a frame from the cartoon with a character's face on it.\n"
-            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
-            "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
-            "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
-            "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
+            "You are given an image of a character's face from a cartoon and the corresponding dialogue.\n"
+            "'Said by same character?' indicates if the text was said by the character in the image.\n"
+            "Identify the emotion(s) displayed by the character in the image from the following: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
             "[/INST]"
         )
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=50)
+        outputs = model.generate(**inputs, max_new_tokens=150)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
