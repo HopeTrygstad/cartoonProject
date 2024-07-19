@@ -62,7 +62,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
-        emotions_match = re.search(r'\[INST\].*?\[\/INST\](.*)', response, re.DOTALL)
+        emotions_match = re.search(r'\n\n(.*)', response, re.DOTALL)
         emotions_text = emotions_match.group(1).strip() if emotions_match else response.strip()
         emotions_list = [emotion.strip() for emotion in emotions_text.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
 
