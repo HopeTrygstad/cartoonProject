@@ -1,6 +1,5 @@
 import csv
 import os
-import requests
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
@@ -36,28 +35,23 @@ def get_image_path(image_directory, image_name):
 # Function to prompt LLaVa-Next with the image and text
 def get_emotion(image_path, corresponding_text, same_character):
     try:
-        print(f"Opening image: {image_path}")
         image = Image.open(image_path)
         prompt = (
             "[INST] <image>\n"
             "Here is some text and an image. They are taken from a cartoon.\n"
-            "The text is the dialogue in the cartoon at the time that the frame was taken from.\n"
-            "\"Said by same character?\" clarifies whether or not the given text was said by the character depicted in the image.\n\n"
             "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
+            "The text provided is whatever dialogue was being said in the cartoon during the time that the frame was taken from.\n"
+            "\"Said by same character?\" clarifies whether or not the given text was said by the character depicted in the image.\n\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
             "[/INST]"
         )
-        print(f"Prompt: {prompt}")
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        print(f"Inputs: {inputs}")
-
         outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
-        print(f"Response: {response}")
 
         # Extract emotions from the response
         emotions_start = response.find('[/INST]') + len('[/INST]')
@@ -66,8 +60,7 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         return emotions_list
     except Exception as e:
-        print(f"Error during emotion generation: {e}")
-        return ["Error"]
+        return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
@@ -83,8 +76,8 @@ try:
     with open("LlavaResults.txt", "w") as results_file:
         # Print the column headers to debug
         if rows:
-            print("Column headers:", rows[0].keys())
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
+            results_file.flush()
 
         for idx, row in enumerate(rows):
             print(f"Processing row {idx+1}/{len(rows)}")
@@ -95,6 +88,7 @@ try:
 
             if not image_name or not corresponding_text or not annotation:
                 results_file.write(f"Skipping row due to missing data: {row}\n")
+                results_file.flush()
                 continue
 
             image_path = get_image_path(image_directory, image_name)
@@ -106,6 +100,7 @@ try:
                 correct_count += 1
 
             results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+            results_file.flush()
 
         total_rows = len(rows)
         correct_percentage = (correct_count / total_rows) * 100
@@ -113,7 +108,9 @@ try:
         results_file.write(f"\nAll Detected Emotions: {all_emotions}\n")
         results_file.write(f"Total Correct Identifications: {correct_count}/{total_rows}\n")
         results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
+        results_file.flush()
 
 except Exception as e:
     with open("LlavaResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
+        results_file.flush()
