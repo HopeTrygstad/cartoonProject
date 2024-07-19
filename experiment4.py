@@ -50,10 +50,9 @@ def get_emotion(image_path, corresponding_text, same_character):
         outputs = model.generate(**inputs, max_new_tokens=150)  # Increase max_new_tokens for better control
 
         response = processor.decode(outputs[0], skip_special_tokens=True)
-        print(f"Response: {response}")  # Debug output to verify the response format
-        emotions = response.split('[/INST]')[-1].strip().split(',')
-        emotions_list = [emotion.strip() for emotion in emotions]
-        return emotions_list
+        response_cleaned = response.split('[/INST]')[-1].strip()
+        emotions = [emotion.strip() for emotion in response_cleaned.split(',')]
+        return emotions
     except Exception as e:
         print(f"Error during emotion generation: {e}")
         return [f"Error: {e}"]
@@ -94,6 +93,7 @@ try:
 
             results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
             results_file.write(f"Identified Emotions: {identified_emotions}\n")  # Add debug output to the file
+            results_file.flush()  # Ensure data is written to the file
 
         total_rows = len(rows)
         correct_percentage = (correct_count / total_rows) * 100
@@ -105,4 +105,3 @@ try:
 except Exception as e:
     with open(output_file_path, "w") as results_file:
         results_file.write(f"Error: {e}\n")
-
