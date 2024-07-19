@@ -37,9 +37,9 @@ def get_image_path(image_directory, image_name):
 def get_emotion(image_path, corresponding_text, same_character):
     try:
         print(f"Opening image: {image_path}")
-        image = Image.open(image_path)
+        image = Image.open(image_path).convert("RGB")
         prompt = (
-            f"Here is some text and an image. They are taken from a cartoon.\n"
+            f"[INST] <image>\nHere is some text and an image. They are taken from a cartoon.\n"
             f"Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             f"Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             f"Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
@@ -48,7 +48,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
         print(f"Prompt: {prompt}")
 
-        inputs = processor(prompt, image, return_tensors="pt").to(device)
+        inputs = processor(text=prompt, images=image, return_tensors="pt").to(device)
         print(f"Inputs: {inputs}")
 
         outputs = model.generate(**inputs, max_new_tokens=50)
