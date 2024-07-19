@@ -47,13 +47,15 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=100)  # Use max_new_tokens for better control
+        outputs = model.generate(**inputs, max_new_tokens=150)  # Increase max_new_tokens for better control
 
         response = processor.decode(outputs[0], skip_special_tokens=True)
+        print(f"Response: {response}")  # Debug output to verify the response format
         emotions = response.split('[/INST]')[-1].strip().split(',')
         emotions_list = [emotion.strip() for emotion in emotions]
         return emotions_list
     except Exception as e:
+        print(f"Error during emotion generation: {e}")
         return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
@@ -72,6 +74,7 @@ try:
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
 
         for i, row in enumerate(rows, 1):
+            print(f"Processing row {i}/{len(rows)}")  # Debug output for progress
             image_name = row.get('Image Name', '').strip()
             corresponding_text = row.get('Corresponding Text', '').strip()
             same_character = row.get('Said by same character?', '').strip()
@@ -90,6 +93,7 @@ try:
                 correct_count += 1
 
             results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+            results_file.write(f"Identified Emotions: {identified_emotions}\n")  # Add debug output to the file
 
         total_rows = len(rows)
         correct_percentage = (correct_count / total_rows) * 100
@@ -101,3 +105,4 @@ try:
 except Exception as e:
     with open(output_file_path, "w") as results_file:
         results_file.write(f"Error: {e}\n")
+
