@@ -49,10 +49,8 @@ def get_emotion(image_path, corresponding_text, same_character):
         print(f"Prompt: {prompt}")
 
         inputs = processor(text=prompt, images=image, return_tensors="pt").to(device)
-        print(f"Inputs: {inputs}")
 
-        outputs = model.generate(**inputs, max_new_tokens=50)
-        print(f"Outputs: {outputs}")
+        outputs = model.generate(**inputs, max_new_tokens=100)
 
         response = processor.decode(outputs[0], skip_special_tokens=True)
         print(f"Response: {response}")
@@ -100,7 +98,7 @@ try:
                 if is_correct:
                     correct_count += 1
                 
-                results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+                results_file.write(f"Processed {image_name} - Correct: {is_correct} - Identified Emotions: {identified_emotions}\n")
             except Exception as e:
                 results_file.write(f"Error processing row: {e}\n")
 
