@@ -1,5 +1,6 @@
 import csv
 import os
+import requests
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
@@ -16,7 +17,6 @@ processor = LlavaNextProcessor.from_pretrained("llava-hf/llava-v1.6-mistral-7b-h
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
 image_directory = 'Face_extraction'
-output_file_path = 'LlaVaResults.txt'
 
 # Function to read all rows from the CSV file
 def get_all_rows(csv_file_path):
@@ -36,26 +36,38 @@ def get_image_path(image_directory, image_name):
 # Function to prompt LLaVa-Next with the image and text
 def get_emotion(image_path, corresponding_text, same_character):
     try:
+        print(f"Opening image: {image_path}")
         image = Image.open(image_path)
         prompt = (
-            f"[INST] <image>\nHere is some text and an image. They are taken from a cartoon.\n"
-            f"Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
-            f"Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            f"Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
-            f"Text: {corresponding_text}\n"
-            f"Said by same character?: {same_character} [/INST]"
+            "[INST] <image>\n"
+            "Here is some text and an image. They are taken from a cartoon.\n"
+            "The text is the dialogue in the cartoon at the time that the frame was taken from.\n"
+            "\"Said by same character?\" clarifies whether or not the given text was said by the character depicted in the image.\n\n"
+            "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
+            "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
+            "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
+            f"Text: \"{corresponding_text}\"\n"
+            f"Said by same character?: {same_character}\n"
+            "[/INST]"
         )
+        print(f"Prompt: {prompt}")
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=150)  # Increase max_new_tokens for better control
+        print(f"Inputs: {inputs}")
 
+        outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
-        response_cleaned = response.split('[/INST]')[-1].strip()
-        emotions = [emotion.strip() for emotion in response_cleaned.split(',')]
-        return emotions
+        print(f"Response: {response}")
+
+        # Extract emotions from the response
+        emotions_start = response.find('[/INST]') + len('[/INST]')
+        emotions_text = response[emotions_start:].strip()
+        emotions_list = [emotion.strip() for emotion in emotions_text.split(',')]
+
+        return emotions_list
     except Exception as e:
         print(f"Error during emotion generation: {e}")
-        return [f"Error: {e}"]
+        return ["Error"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
@@ -68,12 +80,14 @@ try:
     all_emotions = []
     correct_count = 0
 
-    with open(output_file_path, "w") as results_file:
+    with open("LlavaResults.txt", "w") as results_file:
+        # Print the column headers to debug
         if rows:
+            print("Column headers:", rows[0].keys())
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
 
-        for i, row in enumerate(rows, 1):
-            print(f"Processing row {i}/{len(rows)}")  # Debug output for progress
+        for idx, row in enumerate(rows):
+            print(f"Processing row {idx+1}/{len(rows)}")
             image_name = row.get('Image Name', '').strip()
             corresponding_text = row.get('Corresponding Text', '').strip()
             same_character = row.get('Said by same character?', '').strip()
@@ -92,8 +106,6 @@ try:
                 correct_count += 1
 
             results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
-            results_file.write(f"Identified Emotions: {identified_emotions}\n")  # Add debug output to the file
-            results_file.flush()  # Ensure data is written to the file
 
         total_rows = len(rows)
         correct_percentage = (correct_count / total_rows) * 100
@@ -103,5 +115,5 @@ try:
         results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
 
 except Exception as e:
-    with open(output_file_path, "w") as results_file:
+    with open("LlavaResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
