@@ -36,7 +36,6 @@ def get_image_path(image_directory, image_name):
 # Function to prompt LLaVa-Next with the image and text
 def get_emotion(image_path, corresponding_text, same_character):
     try:
-        print(f"Opening image: {image_path}")
         image = Image.open(image_path).convert("RGB")
         prompt = (
             f"[INST] <image>\nHere is some text and an image. They are taken from a cartoon.\n"
@@ -46,18 +45,16 @@ def get_emotion(image_path, corresponding_text, same_character):
             f"Text: {corresponding_text}\n\n"
             f"Said by same character?: {same_character} [/INST]"
         )
-        print(f"Prompt: {prompt}")
 
         inputs = processor(text=prompt, images=image, return_tensors="pt").to(device)
-
         outputs = model.generate(**inputs, max_new_tokens=100)
 
         response = processor.decode(outputs[0], skip_special_tokens=True)
-        print(f"Response: {response}")
 
         # Extract emotions from response
         emotions_start_idx = response.rfind("Said by same character?:") + len("Said by same character?: ")
-        emotions_list = response[emotions_start_idx:].strip().split(', ')
+        emotions_raw = response[emotions_start_idx:].strip()
+        emotions_list = [emotion.strip() for emotion in emotions_raw.replace('[INST]', '').split(',') if emotion.strip() in ["Happiness", "Anger", "Sadness", "Fear", "Disgust", "Surprise", "Contempt"]]
         return emotions_list
     except Exception as e:
         print(f"Error during emotion generation: {e}")
