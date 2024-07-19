@@ -57,7 +57,7 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         # Extract emotions from the response using a more precise regex pattern
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
-        return emotions_list
+        return emotions_list[:2]  # Limit to a maximum of two emotions
     except Exception as e:
         return [f"Error: {e}"]
 
