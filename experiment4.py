@@ -43,8 +43,8 @@ def get_emotion(image_path, corresponding_text, same_character):
             "The image is a frame from the cartoon showing a character's face.\n"
             "The text is the dialogue being said during the cartoon at the time the frame was taken.\n"
             "'Said by same character?' indicates if the text was said by the character in the image.\n"
-            "Your task is to identify the emotion or emotions (maximum of two) displayed by the character in the image. "
-            "Choose from the following emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n\n"
+            "Your task is to identify the emotion or emotions (maximum of two) displayed by the character in the image. Choose from the following emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
+            "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
             "[/INST]"
@@ -52,15 +52,11 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
         outputs = model.generate(**inputs, max_new_tokens=150)
-        response = processor.decode(outputs[0], skip_special_tokens=True)
-        
-        # Print response for debugging
-        print(f"Prompt: {prompt}")
-        print(f"Response: {response}")
+        response = processor.decode(outputs[0], skip_special_tokens=True).strip()
 
-        # Extract emotions from the response using a more precise regex pattern
-        emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
-        return emotions_list[:2]  # Limit to a maximum of two emotions
+        # Extract emotions from the response
+        emotions = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
+        return list(set(emotions))  # Remove duplicates and keep the unique emotions
     except Exception as e:
         return [f"Error: {e}"]
 
