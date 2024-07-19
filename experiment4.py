@@ -55,7 +55,9 @@ def get_emotion(image_path, corresponding_text, same_character):
         response = processor.decode(outputs[0], skip_special_tokens=True)
         print(f"Response: {response}")
 
-        emotions_list = [emotion.strip() for emotion in response.split(',')]
+        # Extract emotions from response
+        emotions_start_idx = response.rfind("Said by same character?:") + len("Said by same character?: ")
+        emotions_list = response[emotions_start_idx:].strip().split(', ')
         return emotions_list
     except Exception as e:
         print(f"Error during emotion generation: {e}")
@@ -78,29 +80,25 @@ try:
             print("Column headers:", rows[0].keys())
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
 
-        for i, row in enumerate(rows):
-            print(f"Processing row {i+1}/{len(rows)}")
+        for row_idx, row in enumerate(rows, start=1):
             image_name = row.get('Image Name', '').strip()
             corresponding_text = row.get('Corresponding Text', '').strip()
             same_character = row.get('Said by same character?', '').strip()
             annotation = row.get('Annotation', '').strip()
-            
+
             if not image_name or not corresponding_text or not annotation:
-                results_file.write(f"Skipping row due to missing data: {row}\n")
+                results_file.write(f"Skipping row {row_idx} due to missing data: {row}\n")
                 continue
-            
-            try:
-                image_path = get_image_path(image_directory, image_name)
-                identified_emotions = get_emotion(image_path, corresponding_text, same_character)
-                all_emotions.append(identified_emotions)
-                
-                is_correct = check_correctness(identified_emotions, annotation)
-                if is_correct:
-                    correct_count += 1
-                
-                results_file.write(f"Processed {image_name} - Correct: {is_correct} - Identified Emotions: {identified_emotions}\n")
-            except Exception as e:
-                results_file.write(f"Error processing row: {e}\n")
+
+            image_path = get_image_path(image_directory, image_name)
+            identified_emotions = get_emotion(image_path, corresponding_text, same_character)
+            all_emotions.append(identified_emotions)
+
+            is_correct = check_correctness(identified_emotions, annotation)
+            if is_correct:
+                correct_count += 1
+
+            results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
 
         total_rows = len(rows)
         correct_percentage = (correct_count / total_rows) * 100
