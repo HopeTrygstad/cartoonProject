@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
@@ -61,9 +62,9 @@ def get_emotion(image_path, corresponding_text, same_character):
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
-        emotions_start = response.find('[/INST]') + len('[/INST]')
-        emotions_text = response[emotions_start:].strip()
-        emotions_list = [emotion.strip() for emotion in emotions_text.split(',')]
+        emotions_match = re.search(r'\[INST\].*?\[\/INST\](.*)', response, re.DOTALL)
+        emotions_text = emotions_match.group(1).strip() if emotions_match else response.strip()
+        emotions_list = [emotion.strip() for emotion in emotions_text.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
 
         return emotions_list
     except Exception as e:
