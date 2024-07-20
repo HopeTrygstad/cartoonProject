@@ -36,7 +36,11 @@ def get_emotion(image_path, corresponding_text, same_character):
     try:
         print(f"Opening image: {image_path}")
         image = Image.open(image_path)
-        prompt = f"Question: What emotions are being displayed?\nText: {corresponding_text}\nSaid by same character?: {same_character}\nAnswer:"
+        prompt = (
+            f"Question: What emotions are being displayed in this image? "
+            f"The text is: \"{corresponding_text}\". "
+            f"Is the text said by the same character in the image? {same_character}.\nAnswer:"
+        )
         print(f"Prompt: {prompt}")
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
@@ -48,7 +52,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         response = processor.batch_decode(outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
         print(f"Response: {response}")
 
-        emotions_list = [emotion.strip() for emotion in response.split(',')]
+        emotions_list = [emotion.strip() for emotion in response.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
         return emotions_list
     except Exception as e:
         print(f"Error during emotion generation: {e}")
