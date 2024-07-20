@@ -57,6 +57,7 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         # Extract emotions from the response
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
+        emotions_list = list(set(emotions_list))[:2]  # Remove duplicates and limit to 2 emotions
 
         return emotions_list
     except Exception as e:
