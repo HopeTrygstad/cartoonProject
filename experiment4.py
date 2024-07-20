@@ -55,7 +55,10 @@ def get_emotion(image_path, corresponding_text, same_character):
         outputs = model.generate(**inputs, max_new_tokens=150)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
-        # Extract emotions from the response
+        # Extract the relevant part of the response after the prompt
+        response = response.split('[/INST]')[-1].strip()
+        
+        # Extract emotions from the relevant part of the response
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
         emotions_list = list(set(emotions_list))[:2]  # Remove duplicates and limit to 2 emotions
 
