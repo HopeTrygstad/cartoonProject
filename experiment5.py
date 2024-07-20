@@ -1,16 +1,17 @@
 import csv
 import os
-import requests
 from PIL import Image
-from transformers import BlipProcessor, Blip2Model
+import requests
+from transformers import Blip2Processor, Blip2Model
 import torch
 
 # Set device
-device = "cuda:0"
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Load the pretrained BLIP-2 model and processor
-model = Blip2Model.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16).to(device)
-processor = BlipProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
+processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
+model = Blip2Model.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16)
+model.to(device)
 
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
@@ -36,45 +37,79 @@ def get_emotion(image_path, corresponding_text, same_character):
     try:
         print(f"Opening image: {image_path}")
         image = Image.open(image_path)
-        prompt = f"Question: What emotions are being displayed?\nText: {corresponding_text}\nSaid by same character?: {same_character}\nAnswer:"
+        prompt = (
+            "You will be given an image and some text from a cartoon.\n"
+            "The image is a frame from the cartoon showing a character's face.\n"
+            "The text is the dialogue being said during the cartoon at the time the frame was taken.\n"
+            "'Said by same character?' indicates if the text was said by the character in the image.\n"
+            "Your task is to identify the emotion or emotions (maximum of two) displayed by the character in the image. "
+            "Choose from the following emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n\n"
+            f"Text: \"{corresponding_text}\"\n"
+            f"Said by same character?: {same_character}\n"
+            "Answer:"
+        )
         print(f"Prompt: {prompt}")
 
-        inputs = processor(images=image, text=prompt, return_tensors="pt").to(device)
-        print(f"Inputs: {inputs}")
-
-        outputs = model.generate(**inputs, max_length=50)
-        print(f"Outputs: {outputs}")
-
-        response = processor.batch_decode(outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
+        outputs = model.generate(**inputs, max_new_tokens=150)
+        response = processor.batch_decode(outputs, skip_special_tokens=True)[0].strip()
         print(f"Response: {response}")
 
-        emotions_list = [emotion.strip() for emotion in response.split(',')]
+        # Extract emotions from the response
+        emotions_list = [emotion.strip() for emotion in response.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
         return emotions_list
     except Exception as e:
         print(f"Error during emotion generation: {e}")
         return ["Error"]
 
-# Test processing of the first row
+# Function to check correctness of identified emotions
+def check_correctness(identified_emotions, annotation):
+    annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
+    return any(emotion in identified_emotions for emotion in annotated_emotions)
+
+# Main script execution
 try:
-    print("Reading rows from CSV file...")
     rows = get_all_rows(csv_file_path)
-    print(f"Total rows read: {len(rows)}")
+    all_emotions = []
+    correct_count = 0
 
-    if rows:
-        first_row = rows[0]
-        print(f"First row: {first_row}")
+    with open("BlipResults.txt", "w") as results_file:
+        if rows:
+            results_file.write(f"Column headers: {list(rows[0].keys())}\n")
+            results_file.flush()
 
-        image_name = first_row.get('Image Name', '').strip()
-        corresponding_text = first_row.get('Corresponding Text', '').strip()
-        same_character = first_row.get('Said by same character?', '').strip()
-        annotation = first_row.get('Annotation', '').strip()
+        for idx, row in enumerate(rows):
+            print(f"Processing row {idx+1}/{len(rows)}")
+            image_name = row.get('Image Name', '').strip()
+            corresponding_text = row.get('Corresponding Text', '').strip()
+            same_character = row.get('Said by same character?', '').strip()
+            annotation = row.get('Annotation', '').strip()
 
-        if not image_name or not corresponding_text or not annotation:
-            print(f"Skipping row due to missing data: {first_row}")
-        else:
+            if not image_name or not corresponding_text or not annotation:
+                results_file.write(f"Skipping row due to missing data: {row}\n")
+                results_file.flush()
+                continue
+
             image_path = get_image_path(image_directory, image_name)
             identified_emotions = get_emotion(image_path, corresponding_text, same_character)
-            print(f"Identified Emotions: {identified_emotions}")
+            all_emotions.append(identified_emotions)
+
+            is_correct = check_correctness(identified_emotions, annotation)
+            if is_correct:
+                correct_count += 1
+
+            results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+            results_file.flush()
+
+        total_rows = len(rows)
+        correct_percentage = (correct_count / total_rows) * 100
+
+        results_file.write(f"\nAll Detected Emotions: {all_emotions}\n")
+        results_file.write(f"Total Correct Identifications: {correct_count}/{total_rows}\n")
+        results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
+        results_file.flush()
 
 except Exception as e:
-    print(f"Error: {e}")
+    with open("BlipResults.txt", "w") as results_file:
+        results_file.write(f"Error: {e}\n")
+        results_file.flush()
