@@ -1,0 +1,118 @@
+Column headers: ['Image Name', 'Corresponding Text', 'Said by same character?', 'Annotation', 'Youtube Link']
+Processed 1.jpg - Correct: False
+Processed 2.jpg - Correct: True
+Processed 3.jpg - Correct: False
+Processed 4.jpg - Correct: True
+Processed 5.jpg - Correct: False
+Processed 6.jpg - Correct: True
+Processed 7.jpg - Correct: True
+Processed 8.jpg - Correct: True
+Processed 9.jpg - Correct: False
+Processed 10.jpg - Correct: False
+Processed 11.jpg - Correct: False
+Processed 12.jpg - Correct: False
+Processed 13.jpg - Correct: False
+Processed 14.jpg - Correct: True
+Processed 15.jpg - Correct: False
+Processed 16.jpg - Correct: True
+Processed 17.jpg - Correct: False
+Processed 18.jpg - Correct: True
+Processed 19.jpg - Correct: True
+Processed 20.jpg - Correct: True
+Processed 21.jpg - Correct: True
+Processed 22.jpg - Correct: True
+Processed 23.jpg - Correct: True
+Processed 24.jpg - Correct: True
+Processed 25.jpg - Correct: True
+Processed 26.jpg - Correct: True
+Processed 27.jpg - Correct: True
+Processed 28.jpg - Correct: True
+Processed 29.jpg - Correct: True
+Processed 30.jpg - Correct: True
+Processed 31.jpg - Correct: True
+Processed 32.jpg - Correct: False
+Processed 33.jpg - Correct: False
+Processed 34.jpg - Correct: False
+Processed 35.jpg - Correct: True
+Processed 36.jpg - Correct: True
+Processed 37.jpg - Correct: True
+Processed 38.jpg - Correct: True
+Processed 39.jpg - Correct: False
+Processed 40.jpg - Correct: False
+Processed 41.jpg - Correct: False
+Processed 42.jpg - Correct: False
+Processed 43.jpg - Correct: True
+Processed 44.jpg - Correct: True
+Processed 45.jpg - Correct: False
+Processed 46.jpg - Correct: False
+Processed 47.jpg - Correct: False
+Processed 48.jpg - Correct: False
+Processed 49.jpg - Correct: False
+Processed 50.jpg - Correct: True
+Processed 51.jpg - Correct: False
+Processed 52.jpg - Correct: False
+Processed 53.jpg - Correct: True
+Processed 54.jpg - Correct: False
+Processed 55.jpg - Correct: True
+Processed 56.jpg - Correct: False
+Processed 57.jpg - Correct: True
+Processed 58.jpg - Correct: False
+Processed 59.jpg - Correct: False
+Processed 60.jpg - Correct: False
+Processed 61.jpg - Correct: True
+Processed 62.jpg - Correct: True
+Processed 63.jpg - Correct: True
+Processed 64.jpg - Correct: True
+Processed 65.jpg - Correct: True
+Processed 66.jpg - Correct: True
+Processed 67.jpg - Correct: True
+Processed 68.jpg - Correct: True
+Processed 69.jpg - Correct: True
+Processed 70.jpg - Correct: True
+Processed 71.jpg - Correct: True
+Processed 72.jpg - Correct: False
+Processed 73.jpg - Correct: True
+Processed 74.jpg - Correct: True
+Processed 75.jpg - Correct: True
+Processed 76.jpg - Correct: False
+Processed 77.jpg - Correct: False
+Processed 78.jpg - Correct: False
+Processed 79.jpg - Correct: True
+Processed 80.jpg - Correct: False
+Processed 81.jpg - Correct: False
+Processed 82.jpg - Correct: False
+Processed 83.jpg - Correct: False
+Processed 84.jpg - Correct: False
+Processed 85.jpg - Correct: True
+Processed 86.jpg - Correct: True
+Processed 87.jpg - Correct: True
+Processed 88.jpg - Correct: True
+Processed 89.jpg - Correct: False
+Processed 90.jpg - Correct: True
+Processed 91.jpg - Correct: False
+Processed 92.jpg - Correct: False
+Processed 93.jpg - Correct: False
+Processed 94.jpg - Correct: False
+Processed 95.jpg - Correct: False
+Processed 96.jpg - Correct: False
+Processed 97.jpg - Correct: False
+Processed 98.jpg - Correct: False
+Processed 99.jpg - Correct: False
+Processed 100.jpg - Correct: False
+Processed 101.jpg - Correct: False
+Processed 102.jpg - Correct: False
+Processed 103.jpg - Correct: True
+Processed 104.jpg - Correct: True
+Processed 105.jpg - Correct: True
+All Detected Emotions: [['Surprise'], ['Happiness'], ['Surprise'], ['Happiness'], ['Surprise'], ['Happiness'], ['Happiness'], ['Happiness'], ['Surprise'], ['Sur
+prise'], ['Surprise'], ['Anger'], ['Surprise'], ['Happiness'], ['Surprise'], ['Anger'], ['Disgust'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['An
+ger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Sadness'], ['Anger', 'Fear'], ['Anger'], ['Surprise'], ['Sadness'], ['Sadn
+ess'], ['Sadness'], ['Sadness'], ['Surprise'], ['Anger'], ['Anger'], ['Surprise'], ['Sadness'], ['Sadness'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surpris
+e'], ['Surprise'], ['Surprise'], ['Anger'], ['Surprise'], ['Fear'], ['Anger'], ['Fear', 'Surprise'], ['Surprise'], ['Anger', 'Fear'], ['Surprise'], ['Surprise']
+, ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Su
+rprise'], ['Anger', 'Contempt'], ['Surprise'], ['Surprise'], ['Surprise'], ['Anger'], ['Surprise'], ['Surprise'], ['Disgust'], ['Surprise'], ['Contempt'], ['Sur
+prise'], ['Sadness'], ['Anger'], ['Disgust'], ['Disgust', 'Surprise'], ['Disgust'], ['Disgust'], ['Anger'], ['Anger', 'Disgust'], ['Sadness'], ['Surprise'], ['S
+urprise'], ['Anger'], ['Anger'], ['Sadness'], ['Disgust'], ['Surprise'], ['Surprise'], ['Anger'], ['Anger'], ['Surprise'], ['Anger'], ['Anger'], ['Anger', 'Cont
+empt']]
+Total Correct Identifications: 54/105
+Percentage of Correct Identifications: 51.43%
