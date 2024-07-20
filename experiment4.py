@@ -41,7 +41,7 @@ def get_emotion(image_path, corresponding_text, same_character):
             "[INST] <image>\n"
             "Here is some text and an image. They are taken from a cartoon.\n"
             "The image is a frame from the cartoon with a character's face on it.\n"
-            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
+            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame.\n"
             "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
             "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
