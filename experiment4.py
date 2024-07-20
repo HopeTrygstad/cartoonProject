@@ -52,7 +52,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=100)
+        outputs = model.generate(**inputs, max_new_tokens=150)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
         # Extract emotions from the response
