@@ -1,12 +1,12 @@
 import csv
 import os
-import re  # Import the re module
+import re  # Added re module import
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
 
 # Set device
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
+device = "cuda:0"
 
 # Load the pretrained LLaVa-Next model and processor
 model = LlavaNextForConditionalGeneration.from_pretrained(
@@ -43,9 +43,8 @@ def get_emotion(image_path, corresponding_text, same_character):
             "The image is a frame from the cartoon with a character's face on it.\n"
             "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
             "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
-            "Your task is to take the image and text information, and label it with the top two of the following seven emotions: "
-            "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "Answer with exactly the top two emotions you identify.\n\n"
+            "Your task is to take the image and text information, and label it with the top two emotions displayed by the character. "
+            "Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
             "[/INST]"
@@ -55,19 +54,17 @@ def get_emotion(image_path, corresponding_text, same_character):
         outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
-        # Extract exactly two emotions from the response
+        # Extract emotions from the response
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
-        if len(emotions_list) > 2:
-            emotions_list = emotions_list[:2]
 
-        return emotions_list
+        return emotions_list[:2]  # Return the top two guesses
     except Exception as e:
         return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
     annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
-    return any(emotion in identified_emotions for emotion in annotated_emotions)
+    return any(emotion in annotated_emotions for emotion in identified_emotions)
 
 # Main script execution
 try:
