@@ -1,6 +1,5 @@
 import csv
 import os
-import requests
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
@@ -34,7 +33,6 @@ def get_image_path(image_directory, image_name):
 # Function to prompt BLIP-2 with the image and text
 def get_emotion(image_path, corresponding_text, same_character):
     try:
-        print(f"Opening image: {image_path}")
         image = Image.open(image_path)
         prompt = (
             f"Here is an image from a cartoon. The text is: \"{corresponding_text}\". "
@@ -42,22 +40,17 @@ def get_emotion(image_path, corresponding_text, same_character):
             f"What emotions are being displayed in this image? "
             f"Answer with a maximum of two emotions from the following: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt."
         )
-        print(f"Prompt: {prompt}")
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
-        print(f"Inputs: {inputs}")
 
-        outputs = model.generate(**inputs, max_new_tokens=150, max_length=None)
-        print(f"Outputs: {outputs}")
+        outputs = model.generate(**inputs, max_new_tokens=150)
 
         response = processor.batch_decode(outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-        print(f"Response: {response}")
 
         emotions_list = [emotion.strip() for emotion in response.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
         return emotions_list
     except Exception as e:
-        print(f"Error during emotion generation: {e}")
-        return ["Error"]
+        return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
