@@ -43,7 +43,8 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
 
-        outputs = model.generate(**inputs, max_new_tokens=150)
+        # Ensure only max_new_tokens is set
+        outputs = model.generate(**inputs, max_new_tokens=150, do_sample=False, num_beams=1)
 
         response = processor.batch_decode(outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
 
@@ -89,7 +90,7 @@ try:
             if is_correct:
                 correct_count += 1
 
-            results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+            results_file.write(f"Processed {image_name} - Correct: {is_correct} - Identified Emotions: {identified_emotions}\n")
             results_file.flush()
 
         total_rows = len(rows)
