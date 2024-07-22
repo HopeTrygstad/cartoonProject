@@ -1,11 +1,12 @@
 import csv
 import os
+import re  # Import the re module
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
 
 # Set device
-device = "cuda:0"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # Load the pretrained LLaVa-Next model and processor
 model = LlavaNextForConditionalGeneration.from_pretrained(

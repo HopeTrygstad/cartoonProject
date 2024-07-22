@@ -6,7 +6,7 @@ from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
 
 # Set device
-device = "cuda:0"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # Load the pretrained LLaVa-Next model and processor
 model = LlavaNextForConditionalGeneration.from_pretrained(
@@ -41,7 +41,7 @@ def get_emotion(image_path, corresponding_text, same_character):
             "[INST] <image>\n"
             "Here is some text and an image. They are taken from a cartoon.\n"
             "The image is a frame from the cartoon with a character's face on it.\n"
-            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame.\n"
+            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
             "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
             "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
@@ -52,15 +52,11 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=150)
+        outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
-        # Extract the relevant part of the response after the prompt
-        response = response.split('[/INST]')[-1].strip()
-        
-        # Extract emotions from the relevant part of the response
+        # Extract emotions from the response
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
-        emotions_list = list(set(emotions_list))[:2]  # Remove duplicates and limit to 2 emotions
 
         return emotions_list
     except Exception as e:

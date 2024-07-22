@@ -1,6 +1,6 @@
 import csv
 import os
-import re  # Import the re module
+import re
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
@@ -43,9 +43,9 @@ def get_emotion(image_path, corresponding_text, same_character):
             "The image is a frame from the cartoon with a character's face on it.\n"
             "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
             "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
-            "Your task is to take the image and text information, and label it with the top two of the following seven emotions: "
+            "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "Answer with exactly the top two emotions you identify.\n\n"
+            "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
             "[/INST]"
@@ -55,10 +55,8 @@ def get_emotion(image_path, corresponding_text, same_character):
         outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
-        # Extract exactly two emotions from the response
+        # Extract emotions from the response
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
-        if len(emotions_list) > 2:
-            emotions_list = emotions_list[:2]
 
         return emotions_list
     except Exception as e:
@@ -75,7 +73,7 @@ try:
     all_emotions = []
     correct_count = 0
 
-    with open("Llava2GuessesResults.txt", "w") as results_file:
+    with open("LlavaResults.txt", "w") as results_file:
         # Print the column headers to debug
         if rows:
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
@@ -113,6 +111,6 @@ try:
         results_file.flush()
 
 except Exception as e:
-    with open("Llava2GuessesResults.txt", "w") as results_file:
+    with open("LlavaResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
         results_file.flush()
