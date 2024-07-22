@@ -42,12 +42,10 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
-        print(f"Inputs: {inputs}")
-
-        generated_ids = model.generate(**inputs)
+        
+        generated_ids = model.generate(**inputs, max_new_tokens=150)
         generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-        print(f"Generated text: {generated_text}")
-
+        
         emotions_list = [emotion.strip() for emotion in generated_text.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
         return emotions_list
     except Exception as e:
