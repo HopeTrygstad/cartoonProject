@@ -1,6 +1,6 @@
 import csv
 import os
-import re  # Added re module import
+import re
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
@@ -54,6 +54,9 @@ def get_emotion(image_path, corresponding_text, same_character):
         outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
+        # Print the raw response for debugging
+        print(f"Raw response: {response}")
+
         # Extract emotions from the response
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
 
@@ -64,7 +67,7 @@ def get_emotion(image_path, corresponding_text, same_character):
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
     annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
-    return any(emotion in annotated_emotions for emotion in identified_emotions)
+    return any(emotion in identified_emotions for emotion in annotated_emotions)
 
 # Main script execution
 try:
