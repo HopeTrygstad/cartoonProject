@@ -5,7 +5,7 @@ from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
 
 # Set device
-device = "cuda:0"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # Load the pretrained BLIP-2 model and processor
 model = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16).to(device)
@@ -43,7 +43,7 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
 
-        # Directly call the model to generate outputs
+        # Only set max_new_tokens
         generated_ids = model.generate(**inputs, max_new_tokens=150)
         generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
@@ -89,7 +89,7 @@ try:
             if is_correct:
                 correct_count += 1
 
-            results_file.write(f"Processed {image_name} - Correct: {is_correct} - Identified Emotions: {identified_emotions}\n")
+            results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
             results_file.flush()
 
         total_rows = len(rows)
