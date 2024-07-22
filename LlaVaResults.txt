@@ -105,8 +105,11 @@ Processed 103.jpg - Correct: True
 Processed 104.jpg - Correct: True
 Processed 105.jpg - Correct: True
 All Detected Emotions: [['Surprise'], ['Happiness'], ['Surprise'], ['Happiness'], ['Surprise'], ['Happiness'], ['Happiness'], ['Happiness'], ['Surprise'], ['Sur
-prise'], ['Surprise'], ['Anger'], ['Surprise'], ['Happiness'], ['Surprise'], ['Anger'], ['Disgust'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['An
-ger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Sadness'], ['Anger', 'Fear'], ['Anger'], ['Surprise'], ['Sadness'], ['Sadn
+prise'], ['Surprise'], ['Anger'], ['Surprise'], ['Happiness'], ['Surprise'],
+
+ ['Anger'], ['Disgust'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'], ['Anger'],
+
+ ['Sadness'], ['Anger', 'Fear'], ['Anger'], ['Surprise'], ['Sadness'], ['Sadn
 ess'], ['Sadness'], ['Sadness'], ['Surprise'], ['Anger'], ['Anger'], ['Surprise'], ['Sadness'], ['Sadness'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surpris
 e'], ['Surprise'], ['Surprise'], ['Anger'], ['Surprise'], ['Fear'], ['Anger'], ['Fear', 'Surprise'], ['Surprise'], ['Anger', 'Fear'], ['Surprise'], ['Surprise']
 , ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Surprise'], ['Su
