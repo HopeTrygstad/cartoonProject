@@ -37,18 +37,17 @@ def get_emotion(image_path, corresponding_text, same_character):
         prompt = (
             f"Here is an image from a cartoon. The text is: \"{corresponding_text}\". "
             f"Is the text said by the same character in the image? {same_character}. "
-            f"What emotions are being displayed in this image? "
+            f"Question: What emotions are being displayed in this image? "
             f"Answer with a maximum of two emotions from the following: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt."
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
 
-        # Ensure only max_new_tokens is set
-        outputs = model.generate(**inputs, max_new_tokens=150, do_sample=False, num_beams=1)
+        # Directly call the model to generate outputs
+        generated_ids = model.generate(**inputs, max_new_tokens=150)
+        generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
-        response = processor.batch_decode(outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-
-        emotions_list = [emotion.strip() for emotion in response.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
+        emotions_list = [emotion.strip() for emotion in generated_text.split(',') if emotion.strip() in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']]
         return emotions_list
     except Exception as e:
         return [f"Error: {e}"]
