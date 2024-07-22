@@ -37,10 +37,9 @@ def get_emotion(image_path, corresponding_text, same_character):
         print(f"Opening image: {image_path}")
         image = Image.open(image_path)
         prompt = (
-            f"Here is an image from a popular cartoon show, displaying a character's face. "
-            f"The dialogue that was being said when this frame was taken is: \"{corresponding_text}\". "
+            f"Here is an image from a cartoon. The text is: \"{corresponding_text}\". "
             f"Is the text said by the same character in the image? {same_character}. "
-            f"Question: What emotions are being displayed in this image? "
+            f"What emotions are being displayed in this image? "
             f"Answer with a maximum of two emotions from the following: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt."
         )
         print(f"Prompt: {prompt}")
@@ -48,7 +47,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
         print(f"Inputs: {inputs}")
 
-        outputs = model.generate(**inputs, max_new_tokens=150)
+        outputs = model.generate(**inputs, max_new_tokens=150, max_length=None)
         print(f"Outputs: {outputs}")
 
         response = processor.batch_decode(outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
@@ -60,27 +59,55 @@ def get_emotion(image_path, corresponding_text, same_character):
         print(f"Error during emotion generation: {e}")
         return ["Error"]
 
-# Test processing of the first row
+# Function to check correctness of identified emotions
+def check_correctness(identified_emotions, annotation):
+    annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
+    return any(emotion in identified_emotions for emotion in annotated_emotions)
+
+# Main script execution
 try:
-    print("Reading rows from CSV file...")
     rows = get_all_rows(csv_file_path)
-    print(f"Total rows read: {len(rows)}")
+    all_emotions = []
+    correct_count = 0
 
-    if rows:
-        first_row = rows[0]
-        print(f"First row: {first_row}")
+    with open("blipResults.txt", "w") as results_file:
+        # Print the column headers to debug
+        if rows:
+            results_file.write(f"Column headers: {list(rows[0].keys())}\n")
+            results_file.flush()
 
-        image_name = first_row.get('Image Name', '').strip()
-        corresponding_text = first_row.get('Corresponding Text', '').strip()
-        same_character = first_row.get('Said by same character?', '').strip()
-        annotation = first_row.get('Annotation', '').strip()
+        for idx, row in enumerate(rows):
+            print(f"Processing row {idx+1}/{len(rows)}")
+            image_name = row.get('Image Name', '').strip()
+            corresponding_text = row.get('Corresponding Text', '').strip()
+            same_character = row.get('Said by same character?', '').strip()
+            annotation = row.get('Annotation', '').strip()
 
-        if not image_name or not corresponding_text or not annotation:
-            print(f"Skipping row due to missing data: {first_row}")
-        else:
+            if not image_name or not corresponding_text or not annotation:
+                results_file.write(f"Skipping row due to missing data: {row}\n")
+                results_file.flush()
+                continue
+
             image_path = get_image_path(image_directory, image_name)
             identified_emotions = get_emotion(image_path, corresponding_text, same_character)
-            print(f"Identified Emotions: {identified_emotions}")
+            all_emotions.append(identified_emotions)
+
+            is_correct = check_correctness(identified_emotions, annotation)
+            if is_correct:
+                correct_count += 1
+
+            results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+            results_file.flush()
+
+        total_rows = len(rows)
+        correct_percentage = (correct_count / total_rows) * 100
+
+        results_file.write(f"\nAll Detected Emotions: {all_emotions}\n")
+        results_file.write(f"Total Correct Identifications: {correct_count}/{total_rows}\n")
+        results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
+        results_file.flush()
 
 except Exception as e:
-    print(f"Error: {e}")
+    with open("blipResults.txt", "w") as results_file:
+        results_file.write(f"Error: {e}\n")
+        results_file.flush()
