@@ -6,7 +6,7 @@ from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
 
 # Set device
-device = "cuda:0"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # Load the pretrained LLaVa-Next model and processor
 model = LlavaNextForConditionalGeneration.from_pretrained(
@@ -52,21 +52,24 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         inputs = processor(prompt, image, return_tensors="pt").to(device)
         outputs = model.generate(**inputs, max_new_tokens=100)
-        response = processor.decode(outputs[0], skip_special_tokens=True)
+        response = processor.decode(outputs[0], skip_special_tokens=True).lower()
 
         # Print the raw response for debugging
         print(f"Raw response: {response}")
 
         # Extract emotions from the response
-        emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
-
-        return emotions_list[:2]  # Return the top two guesses
+        emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
+        detected_emotions = []
+        for emotion in emotions:
+            if re.search(r'\b' + emotion + r'\b', response):
+                detected_emotions.append(emotion)
+        return detected_emotions[:2]
     except Exception as e:
         return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
-    annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
+    annotated_emotions = [emotion.strip().lower() for emotion in annotation.split(',')]
     return any(emotion in identified_emotions for emotion in annotated_emotions)
 
 # Main script execution
