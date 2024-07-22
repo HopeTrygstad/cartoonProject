@@ -38,7 +38,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         image = Image.open(image_path)
         prompt = (
             f"Here is an image from a popular cartoon show, displaying a character's face. "
-            f"The dialogue that was being said when this frame was taken is: \"{corresponding_text}\"."
+            f"The dialogue that was being said when this frame was taken is: \"{corresponding_text}\". "
             f"Is the text said by the same character in the image? {same_character}. "
             f"Question: What emotions are being displayed in this image? "
             f"Answer with a maximum of two emotions from the following: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt."
