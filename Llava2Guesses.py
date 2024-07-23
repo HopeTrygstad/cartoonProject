@@ -51,8 +51,11 @@ def get_emotion(image_path, corresponding_text, same_character):
         print(f"Raw response: {generated_text}")
 
         # Detect emotions explicitly
-        emotions = ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']
-        detected_emotions = [emotion for emotion in emotions if emotion.lower() in generated_text.lower()]
+        emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
+        detected_emotions = []
+        for emotion in emotions:
+            if emotion in generated_text.lower():
+                detected_emotions.append(emotion.capitalize())
 
         # If no emotions are detected, log that for debugging
         if not detected_emotions:
