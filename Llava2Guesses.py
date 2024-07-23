@@ -1,8 +1,8 @@
 import csv
 import os
+import torch
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
-import torch
 
 # Set device
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -35,34 +35,27 @@ def get_emotion(image_path, corresponding_text, same_character):
     try:
         image = Image.open(image_path)
         prompt = (
-            f"Here is some text and an image. They are taken from a cartoon.\n"
-            f"The image is a frame from the cartoon with a character's face on it.\n"
-            f"The text is the piece of dialogue that was being said during the cartoon at the time of the frame.\n"
-            f"'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
+            f"Here is some text and an image. They are taken from a cartoon. The image is a frame from the cartoon with a character's face on it. "
+            f"The text is the piece of dialogue that was being said during the cartoon at the time of the frame. "
+            f"'Said by same character?' indicates whether or not the text was said by the character in the image. "
             f"Your task is to take the image and text information, and label it with the top two emotions displayed by the character. "
-            f"Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            f"Text: \"{corresponding_text}\"\n"
+            f"Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt. "
+            f"Text: \"{corresponding_text}\" "
             f"Said by same character?: {same_character}"
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
-        outputs = model.generate(**inputs, max_new_tokens=150, do_sample=True, top_p=0.95)
-        response = processor.decode(outputs[0], skip_special_tokens=True).lower()
+        generated_ids = model.generate(**inputs, max_new_tokens=150)
+        generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
-        # Print the raw response for debugging
-        print(f"Raw response: {response}")
-
-        # Extract emotions mentioned in the response
         emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
-        detected_emotions = []
-        for emotion in emotions:
-            if emotion in response:
-                detected_emotions.append(emotion.capitalize())
+        detected_emotions = [emotion.capitalize() for emotion in emotions if emotion in generated_text.lower()]
 
-        # Print detected emotions for debugging
+        print(f"Raw response: {generated_text}")
         print(f"Detected emotions: {detected_emotions}")
 
-        return detected_emotions
+        return detected_emotions[:2]  # Ensure it only returns the top 2 detected emotions
+
     except Exception as e:
         print(f"Error during emotion generation: {e}")
         return ["Error"]
@@ -79,6 +72,10 @@ try:
     correct_count = 0
 
     with open("blipResults.txt", "w") as results_file:
+        if rows:
+            results_file.write(f"Column headers: {list(rows[0].keys())}\n")
+            results_file.flush()
+
         for idx, row in enumerate(rows):
             print(f"Processing row {idx+1}/{len(rows)}")
             image_name = row.get('Image Name', '').strip()
@@ -88,6 +85,7 @@ try:
 
             if not image_name or not corresponding_text or not annotation:
                 results_file.write(f"Skipping row due to missing data: {row}\n")
+                results_file.flush()
                 continue
 
             image_path = get_image_path(image_directory, image_name)
@@ -99,6 +97,7 @@ try:
                 correct_count += 1
 
             results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+            results_file.flush()
 
         total_rows = len(rows)
         correct_percentage = (correct_count / total_rows) * 100
@@ -106,7 +105,9 @@ try:
         results_file.write(f"\nAll Detected Emotions: {all_emotions}\n")
         results_file.write(f"Total Correct Identifications: {correct_count}/{total_rows}\n")
         results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
+        results_file.flush()
 
 except Exception as e:
     with open("blipResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
+        results_file.flush()
