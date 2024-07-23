@@ -35,23 +35,23 @@ def get_emotion(image_path, corresponding_text, same_character):
     try:
         image = Image.open(image_path)
         prompt = (
-            f"Here is some text and an image. They are taken from a cartoon. The image is a frame from the cartoon with a character's face on it. "
-            f"The text is the piece of dialogue that was being said during the cartoon at the time of the frame. "
-            f"'Said by same character?' indicates whether or not the text was said by the character in the image. "
+            f"Here is an image and some text from a cartoon. The image is a frame from the cartoon with a character's face. "
+            f"The text is a piece of dialogue said during this frame. 'Said by same character?' indicates whether the text was said by the character in the image. "
             f"Your task is to take the image and text information, and label it with the top two emotions displayed by the character. "
-            f"Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt. "
+            f"Choose from: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt. "
             f"Text: \"{corresponding_text}\" "
             f"Said by same character?: {same_character}. "
-            f"Answer only with the emotions, separated by commas."
+            f"Answer only with the two emotions, separated by a comma."
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
         generated_ids = model.generate(**inputs, max_new_tokens=150)
         generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
-        detected_emotions = [emotion.strip().capitalize() for emotion in generated_text.split(',')]
-
         print(f"Raw response: {generated_text}")
+
+        detected_emotions = [emotion.strip().capitalize() for emotion in generated_text.split(',') if emotion.strip()]
+        
         print(f"Detected emotions: {detected_emotions}")
 
         return detected_emotions
