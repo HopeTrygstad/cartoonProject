@@ -41,20 +41,20 @@ def get_emotion(image_path, corresponding_text, same_character):
             f"Your task is to take the image and text information, and label it with the top two emotions displayed by the character. "
             f"Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt. "
             f"Text: \"{corresponding_text}\" "
-            f"Said by same character?: {same_character}"
+            f"Said by same character?: {same_character}. "
+            f"Answer only with the emotions, separated by commas."
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
         generated_ids = model.generate(**inputs, max_new_tokens=150)
         generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
-        emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
-        detected_emotions = [emotion.capitalize() for emotion in emotions if emotion in generated_text.lower()]
+        detected_emotions = [emotion.strip().capitalize() for emotion in generated_text.split(',')]
 
         print(f"Raw response: {generated_text}")
         print(f"Detected emotions: {detected_emotions}")
 
-        return detected_emotions[:2]  # Ensure it only returns the top 2 detected emotions
+        return detected_emotions
 
     except Exception as e:
         print(f"Error during emotion generation: {e}")
