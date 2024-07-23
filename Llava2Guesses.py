@@ -62,16 +62,21 @@ def get_emotion(image_path, corresponding_text, same_character):
         print(f"Filtered response content: {response_content}")
 
         # Extract emotions from the filtered response content
-        emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response_content)
-        
-        # Get the top two unique emotions
-        unique_emotions = list(dict.fromkeys(emotions_list))
-        detected_emotions = unique_emotions[:2]
+        emotions_list = []
+        for emotion in ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']:
+            if re.search(r'\b' + emotion.lower() + r'\b', response_content.lower()):
+                emotions_list.append(emotion)
+
+        # Ensure exactly two emotions are returned
+        if len(emotions_list) > 2:
+            emotions_list = emotions_list[:2]
+        elif len(emotions_list) < 2:
+            emotions_list.extend([''] * (2 - len(emotions_list)))
 
         # Print the detected emotions for debugging
-        print(f"Detected emotions: {detected_emotions}")
+        print(f"Detected emotions: {emotions_list}")
 
-        return detected_emotions
+        return emotions_list
     except Exception as e:
         print(f"Error: {e}")
         return [f"Error: {e}"]
