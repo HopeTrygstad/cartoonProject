@@ -59,10 +59,8 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         # Extract emotions from the response using regex
         emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
-        detected_emotions = []
-        for emotion in emotions:
-            if re.search(r'\b' + emotion + r'\b', response):
-                detected_emotions.append(emotion.capitalize())
+        detected_emotions = [emotion.capitalize() for emotion in emotions if re.search(r'\b' + emotion + r'\b', response)]
+        
         return detected_emotions[:2]
     except Exception as e:
         return [f"Error: {e}"]
