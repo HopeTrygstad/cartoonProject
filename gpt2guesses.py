@@ -51,12 +51,11 @@ def get_emotion(image_path, corresponding_text, same_character):
         messages=[
             {"role": "system", "content": "You are a helpful assistant that identifies emotions displayed by characters in images and text."},
             {"role": "user", "content": (
-                f"Here is an image frame taken from a cartoon, and the dialogue that was being said at the time of the frame.\n"
-                f"Your task is to take the image and text information, and label it with your guess of what emotion is being displayed."
-                f"Then, after you list your best guess, please provide your second best guess guess of what emotion is being displayed."
-                f"You must choose between these seven emotions: "
+                f"Here is some text and an image. They are taken from a cartoon.\n"
+                f"Your task is to take the image and text information, and label your best guess from the following seven emotions: "
                 f"Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-                f"Answer with two total emotions, in the format [Emotion, Emotion].\n\n"
+                f"After you provide your best guess, think about what your second guess would be, and provide your second best guess for what emotion is being displayed."
+                f"Answer with exactly two emotions, in the format [Emotion, Emotion].\n\n"
                 f"Text: {corresponding_text[:250]}\n\n"
                 f"Said by same character?: {same_character}"
             )},
@@ -96,6 +95,7 @@ try:
             
             if not image_name or not corresponding_text or not annotation:
                 results_file.write(f"Skipping row due to missing data: {row}\n")
+                all_emotions.append([])  # Add empty list as a placeholder
                 continue
             
             try:
@@ -103,6 +103,7 @@ try:
                 identified_emotions = get_emotion(image_path, corresponding_text, same_character)
             except (FileNotFoundError, UnidentifiedImageError) as e:
                 results_file.write(f"Skipping row due to error: {e}\n")
+                all_emotions.append([])  # Add empty list as a placeholder
                 continue
             
             all_emotions.append(identified_emotions)
