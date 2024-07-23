@@ -50,8 +50,15 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         print(f"Raw response: {generated_text}")
 
-        detected_emotions = [emotion.strip().capitalize() for emotion in generated_text.split(',') if emotion.strip()]
-        
+        # Detect emotions explicitly
+        emotions = ['Happiness', 'Anger', 'Sadness', 'Fear', 'Disgust', 'Surprise', 'Contempt']
+        detected_emotions = [emotion for emotion in emotions if emotion.lower() in generated_text.lower()]
+
+        # If no emotions are detected, log that for debugging
+        if not detected_emotions:
+            detected_emotions = ["Error"]
+            print(f"No emotions detected in response: {generated_text}")
+
         print(f"Detected emotions: {detected_emotions}")
 
         return detected_emotions
