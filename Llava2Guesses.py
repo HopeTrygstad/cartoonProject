@@ -54,11 +54,18 @@ def get_emotion(image_path, corresponding_text, same_character):
         outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
+        # Print the raw response for debugging
+        print(f"Raw response: {response}")
+
         # Extract emotions from the response
         emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
 
+        # Print the detected emotions for debugging
+        print(f"Detected emotions: {emotions_list}")
+
         return emotions_list
     except Exception as e:
+        print(f"Error: {e}")
         return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
@@ -72,7 +79,7 @@ try:
     all_emotions = []
     correct_count = 0
 
-    with open("LlavaResults.txt", "w") as results_file:
+    with open("Llava2GuessesResults.txt", "w") as results_file:
         # Print the column headers to debug
         if rows:
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
@@ -110,6 +117,6 @@ try:
         results_file.flush()
 
 except Exception as e:
-    with open("LlavaResults.txt", "w") as results_file:
+    with open("Llava2GuessesResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
         results_file.flush()
