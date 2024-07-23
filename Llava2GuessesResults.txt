@@ -1,0 +1,124 @@
+Column headers: ['Image Name', 'Corresponding Text', 'Said by same character?', 'Annotation', 'Youtube Link']
+Processed 1.jpg - Correct: False
+Processed 2.jpg - Correct: False
+Processed 3.jpg - Correct: False
+Processed 4.jpg - Correct: True
+Processed 5.jpg - Correct: False
+Processed 6.jpg - Correct: False
+Processed 7.jpg - Correct: True
+Processed 8.jpg - Correct: False
+Processed 9.jpg - Correct: True
+Processed 10.jpg - Correct: False
+Processed 11.jpg - Correct: False
+Processed 12.jpg - Correct: False
+Processed 13.jpg - Correct: True
+Processed 14.jpg - Correct: True
+Processed 15.jpg - Correct: False
+Processed 16.jpg - Correct: True
+Processed 17.jpg - Correct: False
+Processed 18.jpg - Correct: True
+Processed 19.jpg - Correct: True
+Processed 20.jpg - Correct: True
+Processed 21.jpg - Correct: True
+Processed 22.jpg - Correct: True
+Processed 23.jpg - Correct: True
+Processed 24.jpg - Correct: True
+Processed 25.jpg - Correct: True
+Processed 26.jpg - Correct: True
+Processed 27.jpg - Correct: True
+Processed 28.jpg - Correct: True
+Processed 29.jpg - Correct: False
+Processed 30.jpg - Correct: True
+Processed 31.jpg - Correct: True
+Processed 32.jpg - Correct: False
+Processed 33.jpg - Correct: False
+Processed 34.jpg - Correct: False
+Processed 35.jpg - Correct: True
+Processed 36.jpg - Correct: True
+Processed 37.jpg - Correct: True
+Processed 38.jpg - Correct: True
+Processed 39.jpg - Correct: False
+Processed 40.jpg - Correct: True
+Processed 41.jpg - Correct: True
+Processed 42.jpg - Correct: False
+Processed 43.jpg - Correct: True
+Processed 44.jpg - Correct: True
+Processed 45.jpg - Correct: True
+Processed 46.jpg - Correct: True
+Processed 47.jpg - Correct: True
+Processed 48.jpg - Correct: True
+Processed 49.jpg - Correct: False
+Processed 50.jpg - Correct: True
+Processed 51.jpg - Correct: True
+Processed 52.jpg - Correct: False
+Processed 53.jpg - Correct: True
+Processed 54.jpg - Correct: True
+Processed 55.jpg - Correct: True
+Processed 56.jpg - Correct: True
+Processed 57.jpg - Correct: True
+Processed 58.jpg - Correct: True
+Processed 59.jpg - Correct: True
+Processed 60.jpg - Correct: True
+Processed 61.jpg - Correct: True
+Processed 62.jpg - Correct: True
+Processed 63.jpg - Correct: True
+Processed 64.jpg - Correct: True
+Processed 65.jpg - Correct: True
+Processed 66.jpg - Correct: True
+Processed 67.jpg - Correct: True
+Processed 68.jpg - Correct: True
+Processed 69.jpg - Correct: True
+Processed 70.jpg - Correct: True
+Processed 71.jpg - Correct: True
+Processed 72.jpg - Correct: False
+Processed 73.jpg - Correct: True
+Processed 74.jpg - Correct: True
+Processed 75.jpg - Correct: True
+Processed 76.jpg - Correct: False
+Processed 77.jpg - Correct: False
+Processed 78.jpg - Correct: False
+Processed 79.jpg - Correct: True
+Processed 80.jpg - Correct: True
+Processed 81.jpg - Correct: True
+Processed 82.jpg - Correct: True
+Processed 83.jpg - Correct: False
+Processed 84.jpg - Correct: True
+Processed 85.jpg - Correct: True
+Processed 86.jpg - Correct: True
+Processed 87.jpg - Correct: True
+Processed 88.jpg - Correct: True
+Processed 89.jpg - Correct: False
+Processed 90.jpg - Correct: True
+Processed 91.jpg - Correct: False
+Processed 92.jpg - Correct: True
+Processed 93.jpg - Correct: True
+Processed 94.jpg - Correct: False
+Processed 95.jpg - Correct: False
+Processed 96.jpg - Correct: False
+Processed 97.jpg - Correct: False
+Processed 98.jpg - Correct: True
+Processed 99.jpg - Correct: True
+Processed 100.jpg - Correct: False
+Processed 101.jpg - Correct: True
+Processed 102.jpg - Correct: False
+Processed 103.jpg - Correct: True
+Processed 104.jpg - Correct: True
+Processed 105.jpg - Correct: True
+
+All Detected Emotions: [['Surprise', ''], ['Surprise', ''], ["Error: cannot identify image file '/oscar/data/csun45/htrygsta/cartoonProject/Face_extraction/3.jp
+g'"], ['Happiness', 'Fear'], ['Surprise', 'Contempt'], ['Fear', 'Surprise'], ['Happiness', 'Contempt'], ['Surprise', 'Contempt'], ['Happiness', 'Surprise'], ['S
+urprise', ''], ['Surprise', ''], ['Fear', 'Surprise'], ['Happiness', 'Surprise'], ['Happiness', 'Surprise'], ['Disgust', 'Contempt'], ['Anger', ''], ['Disgust',
+ 'Surprise'], ['Anger', ''], ['Anger', ''], ['Anger', 'Surprise'], ['Anger', 'Fear'], ['Anger', ''], ['Anger', ''], ['Anger', 'Surprise'], ['Anger', ''], ['Ange
+r', 'Contempt'], ['Anger', ''], ['Anger', ''], ['Surprise', ''], ['Anger', 'Contempt'], ['Sadness', 'Fear'], ['Anger', 'Fear'], ['Anger', 'Fear'], ['Anger', 'Su
+rprise'], ['Anger', 'Sadness'], ['Sadness', ''], ['Sadness', 'Contempt'], ['Sadness', 'Fear'], ['Surprise', ''], ['Sadness', 'Fear'], ['Sadness', 'Contempt'], [
+'Fear', 'Surprise'], ['Sadness', 'Fear'], ['Sadness', 'Fear'], ['Sadness', 'Fear'], ['Fear', 'Surprise'], ['Anger', 'Fear'], ['Fear', 'Surprise'], ['Surprise', 
+''], ['Surprise', ''], ['Anger', 'Fear'], ['Surprise', ''], ['Anger', 'Fear'], ['Anger', 'Fear'], ['Fear', 'Surprise'], ['Fear', 'Surprise'], ['Anger', 'Fear'],
+ ['Fear', 'Surprise'], ['Fear', 'Surprise'], ['Fear', 'Surprise'], ['Fear', 'Surprise'], ['Surprise', 'Contempt'], ['Fear', 'Surprise'], ['Surprise', ''], ['Ang
+er', 'Surprise'], ['Surprise', ''], ['Surprise', 'Contempt'], ['Surprise', ''], ['Fear', 'Surprise'], ['Fear', 'Surprise'], ['Surprise', 'Contempt'], ['Anger', 
+'Contempt'], ['Surprise', 'Contempt'], ['Happiness', 'Surprise'], ['Surprise', ''], ['Sadness', 'Fear'], ['Surprise', ''], ['Surprise', 'Contempt'], ['Disgust',
+ 'Surprise'], ['Disgust', 'Surprise'], ['Anger', 'Contempt'], ['Disgust', 'Surprise'], ['Anger', 'Sadness'], ['Fear', 'Surprise'], ['Disgust', 'Surprise'], ['Di
+sgust', 'Surprise'], ['Fear', 'Disgust'], ['Disgust', 'Surprise'], ['Anger', 'Surprise'], ['Fear', 'Disgust'], ['Sadness', 'Fear'], ['Surprise', 'Contempt'], ['
+Sadness', 'Contempt'], ['Fear', 'Surprise'], ['Fear', 'Disgust'], ['Sadness', 'Fear'], ['Disgust', 'Surprise'], ['Surprise', 'Contempt'], ['Surprise', 'Contempt
+'], ['Sadness', 'Disgust'], ['Surprise', 'Contempt'], ['Disgust', 'Surprise'], ['Anger', 'Contempt'], ['Anger', 'Surprise'], ['Anger', 'Sadness']]
+Total Correct Identifications: 73/105
+Percentage of Correct Identifications: 69.52%

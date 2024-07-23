@@ -4,6 +4,7 @@ import base64
 import time
 import openai
 from PIL import Image, UnidentifiedImageError
+import re
 
 # Define the path to the CSV file and the image directory
 csv_file_path = '/Users/hopetrygstad/Downloads/cartoonProject/cartoonData.csv'
@@ -41,10 +42,13 @@ def resize_image(image_path, output_path, size=(128, 128)):
 def get_emotion(image_path, corresponding_text, same_character):
     openai.api_key = api_key
 
-    resized_image_path = "/tmp/resized_image.jpg"
-    resize_image(image_path, resized_image_path)
+    try:
+        resized_image_path = "/tmp/resized_image.jpg"
+        resize_image(image_path, resized_image_path)
 
-    base64_image = encode_image(resized_image_path)
+        base64_image = encode_image(resized_image_path)
+    except Exception as e:
+        return []  # Return a blank list in case of error
 
     response = openai.ChatCompletion.create(
         model=model,
@@ -52,10 +56,10 @@ def get_emotion(image_path, corresponding_text, same_character):
             {"role": "system", "content": "You are a helpful assistant that identifies emotions displayed by characters in images and text."},
             {"role": "user", "content": (
                 f"Here is some text and an image. They are taken from a cartoon.\n"
-                f"Your task is to take the image and text information, and label your best guess from the following seven emotions: "
+                f"Your task is to identify your best guess of what emotion is being displayed by them. Choose from the following seven emotions:"
                 f"Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-                f"After you provide your best guess, think about what your second guess would be, and provide your second best guess for what emotion is being displayed."
-                f"Answer with exactly two emotions, in the format [Emotion, Emotion].\n\n"
+                f"Then, decide on your second best guess, and provide that as well, from the same list of emotions."
+                f"Answer in two words, in the format: [Emotion, Emotion]."
                 f"Text: {corresponding_text[:250]}\n\n"
                 f"Said by same character?: {same_character}"
             )},
@@ -64,11 +68,19 @@ def get_emotion(image_path, corresponding_text, same_character):
         temperature=0.0,
     )
 
-    # Get the response and convert it to a list
+    # Extract emotions from the response
     response_text = response['choices'][0]['message']['content'].strip()
-    emotions_list = [emotion.strip() for emotion in response_text.strip('[]').split(',')]
+    emotions = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response_text, re.IGNORECASE)
+
+    # Ensure only two emotions are returned, preserving order
+    unique_emotions = []
+    for emotion in emotions:
+        if emotion.lower() not in [e.lower() for e in unique_emotions]:
+            unique_emotions.append(emotion)
+        if len(unique_emotions) == 2:
+            break
     
-    return emotions_list
+    return unique_emotions
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
