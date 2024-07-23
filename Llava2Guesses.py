@@ -42,7 +42,7 @@ def get_emotion(image_path, corresponding_text, same_character):
             f"Your task is to take the image and text information, and label it with the top two emotions displayed by the character. "
             f"Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             f"Text: \"{corresponding_text}\"\n"
-            f"Said by same character?: {same_character}\n"
+            f"Said by same character?: {same_character}"
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
@@ -52,18 +52,14 @@ def get_emotion(image_path, corresponding_text, same_character):
         # Print the raw response for debugging
         print(f"Raw response: {response}")
 
-        # Extract emotions from the response
+        # Extract emotions mentioned in the response
         emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
-        detected_emotions = []
-
-        for emotion in emotions:
-            if f"{emotion}" in response:
-                detected_emotions.append(emotion.capitalize())
+        detected_emotions = [emotion.capitalize() for emotion in emotions if emotion in response]
 
         # Print detected emotions for debugging
         print(f"Detected emotions: {detected_emotions}")
 
-        return detected_emotions[:2]
+        return detected_emotions
     except Exception as e:
         print(f"Error during emotion generation: {e}")
         return ["Error"]
@@ -80,11 +76,6 @@ try:
     correct_count = 0
 
     with open("blipResults.txt", "w") as results_file:
-        # Print the column headers to debug
-        if rows:
-            results_file.write(f"Column headers: {list(rows[0].keys())}\n")
-            results_file.flush()
-
         for idx, row in enumerate(rows):
             print(f"Processing row {idx+1}/{len(rows)}")
             image_name = row.get('Image Name', '').strip()
@@ -94,7 +85,6 @@ try:
 
             if not image_name or not corresponding_text or not annotation:
                 results_file.write(f"Skipping row due to missing data: {row}\n")
-                results_file.flush()
                 continue
 
             image_path = get_image_path(image_directory, image_name)
@@ -106,7 +96,6 @@ try:
                 correct_count += 1
 
             results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
-            results_file.flush()
 
         total_rows = len(rows)
         correct_percentage = (correct_count / total_rows) * 100
@@ -114,9 +103,7 @@ try:
         results_file.write(f"\nAll Detected Emotions: {all_emotions}\n")
         results_file.write(f"Total Correct Identifications: {correct_count}/{total_rows}\n")
         results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
-        results_file.flush()
 
 except Exception as e:
     with open("blipResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
-        results_file.flush()
