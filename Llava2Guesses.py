@@ -46,7 +46,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
-        outputs = model.generate(**inputs, max_new_tokens=150)
+        outputs = model.generate(**inputs, max_new_tokens=150, do_sample=True, top_p=0.95)
         response = processor.decode(outputs[0], skip_special_tokens=True).lower()
 
         # Print the raw response for debugging
@@ -54,7 +54,10 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         # Extract emotions mentioned in the response
         emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
-        detected_emotions = [emotion.capitalize() for emotion in emotions if emotion in response]
+        detected_emotions = []
+        for emotion in emotions:
+            if emotion in response:
+                detected_emotions.append(emotion.capitalize())
 
         # Print detected emotions for debugging
         print(f"Detected emotions: {detected_emotions}")
