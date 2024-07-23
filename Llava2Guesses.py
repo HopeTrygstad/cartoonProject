@@ -57,19 +57,19 @@ def get_emotion(image_path, corresponding_text, same_character):
         # Print the raw response for debugging
         print(f"Raw response: {response}")
 
-        # Extract emotions from the response
+        # Extract emotions from the response using regex
         emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
         detected_emotions = []
         for emotion in emotions:
             if re.search(r'\b' + emotion + r'\b', response):
-                detected_emotions.append(emotion)
+                detected_emotions.append(emotion.capitalize())
         return detected_emotions[:2]
     except Exception as e:
         return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
-    annotated_emotions = [emotion.strip().lower() for emotion in annotation.split(',')]
+    annotated_emotions = [emotion.strip().capitalize() for emotion in annotation.split(',')]
     return any(emotion in identified_emotions for emotion in annotated_emotions)
 
 # Main script execution
