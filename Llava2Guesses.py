@@ -71,7 +71,7 @@ try:
     all_emotions = []
     correct_count = 0
 
-    with open("blipResults.txt", "w") as results_file:
+    with open("Llava2GuessesResults.txt", "w") as results_file:
         if rows:
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
             results_file.flush()
@@ -108,6 +108,6 @@ try:
         results_file.flush()
 
 except Exception as e:
-    with open("blipResults.txt", "w") as results_file:
+    with open("Llava2GuessesResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
         results_file.flush()
