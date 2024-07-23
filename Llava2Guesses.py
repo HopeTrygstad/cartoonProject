@@ -1,6 +1,5 @@
 import csv
 import os
-import re
 from PIL import Image
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
 import torch
@@ -57,12 +56,16 @@ def get_emotion(image_path, corresponding_text, same_character):
         # Print the raw response for debugging
         print(f"Raw response: {response}")
 
-        # Extract emotions from the response using regex
+        # Extract emotions from the response without using regex
         emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
-        detected_emotions = [emotion.capitalize() for emotion in emotions if re.search(r'\b' + emotion + r'\b', response)]
-        
+        detected_emotions = []
+        for emotion in emotions:
+            if emotion in response:
+                detected_emotions.append(emotion.capitalize())
+
         return detected_emotions[:2]
     except Exception as e:
+        print(f"Error during emotion generation: {e}")
         return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
