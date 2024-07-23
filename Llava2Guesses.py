@@ -1,17 +1,15 @@
 import csv
 import os
 from PIL import Image
-from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
+from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
 
 # Set device
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-# Load the pretrained LLaVa-Next model and processor
-model = LlavaNextForConditionalGeneration.from_pretrained(
-    "llava-hf/llava-v1.6-mistral-7b-hf", torch_dtype=torch.float16, low_cpu_mem_usage=True
-).to(device)
-processor = LlavaNextProcessor.from_pretrained("llava-hf/llava-v1.6-mistral-7b-hf")
+# Load the pretrained BLIP-2 model and processor
+model = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16).to(device)
+processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
 
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
@@ -32,44 +30,43 @@ def get_image_path(image_directory, image_name):
     else:
         raise FileNotFoundError(f"Image '{image_path}' not found.")
 
-# Function to prompt LLaVa-Next with the image and text
+# Function to prompt BLIP-2 with the image and text
 def get_emotion(image_path, corresponding_text, same_character):
     try:
         image = Image.open(image_path)
         prompt = (
-            "[INST] <image>\n"
-            "Here is some text and an image. They are taken from a cartoon.\n"
-            "The image is a frame from the cartoon with a character's face on it.\n"
-            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
-            "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
-            "Your task is to take the image and text information, and label it with the top two emotions displayed by the character. "
-            "Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n\n"
+            f"Here is some text and an image. They are taken from a cartoon.\n"
+            f"The image is a frame from the cartoon with a character's face on it.\n"
+            f"The text is the piece of dialogue that was being said during the cartoon at the time of the frame.\n"
+            f"'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
+            f"Your task is to take the image and text information, and label it with the top two emotions displayed by the character. "
+            f"Choose from the following seven emotions: Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
-            "[/INST]"
         )
 
-        inputs = processor(prompt, image, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=100)
+        inputs = processor(images=image, text=prompt, return_tensors="pt").to(device, torch.float16)
+        outputs = model.generate(**inputs, max_new_tokens=150)
         response = processor.decode(outputs[0], skip_special_tokens=True).lower()
 
         # Print the raw response for debugging
         print(f"Raw response: {response}")
 
-        # Extract emotions from the response without using regex
+        # Extract emotions from the response
         emotions = ['happiness', 'anger', 'sadness', 'fear', 'disgust', 'surprise', 'contempt']
         detected_emotions = []
 
         for emotion in emotions:
-            if emotion in response:
+            if f"{emotion}" in response:
                 detected_emotions.append(emotion.capitalize())
 
+        # Print detected emotions for debugging
         print(f"Detected emotions: {detected_emotions}")
 
         return detected_emotions[:2]
     except Exception as e:
         print(f"Error during emotion generation: {e}")
-        return [f"Error: {e}"]
+        return ["Error"]
 
 # Function to check correctness of identified emotions
 def check_correctness(identified_emotions, annotation):
@@ -82,7 +79,7 @@ try:
     all_emotions = []
     correct_count = 0
 
-    with open("Llava2GuessesResults.txt", "w") as results_file:
+    with open("blipResults.txt", "w") as results_file:
         # Print the column headers to debug
         if rows:
             results_file.write(f"Column headers: {list(rows[0].keys())}\n")
@@ -120,6 +117,6 @@ try:
         results_file.flush()
 
 except Exception as e:
-    with open("Llava2GuessesResults.txt", "w") as results_file:
+    with open("blipResults.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
         results_file.flush()
