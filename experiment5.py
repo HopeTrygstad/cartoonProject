@@ -7,8 +7,8 @@ from transformers import Blip2Processor, Blip2Model
 import re
 
 # Define the path to the CSV file and the image directory
-csv_file_path = '/Users/hopetrygstad/Downloads/cartoonProject/cartoonData.csv'
-image_directory = '/Users/hopetrygstad/Downloads/cartoonProject/Face_extraction'
+csv_file_path = 'cartoonData.csv'
+image_directory = 'Face_extraction'
 model_name = "Salesforce/blip2-opt-2.7b"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -44,8 +44,6 @@ def resize_image(image_path, output_path, size=(128, 128)):
 
 # Function to prompt BLIP-2 with the image and text
 def get_emotion(image_path, corresponding_text, same_character):
-    openai.api_key = api_key
-
     try:
         resized_image_path = "/tmp/resized_image.jpg"
         resize_image(image_path, resized_image_path)
