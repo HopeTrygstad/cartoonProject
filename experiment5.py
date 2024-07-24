@@ -1,8 +1,8 @@
 import csv
 import os
 import re
-from PIL import Image
-from transformers import Blip2Processor, Blip2ForConditionalGeneration
+from PIL import Image, UnidentifiedImageError
+from transformers import Blip2Processor, Blip2ForConditionalGeneration  # Changed to Blip2ForConditionalGeneration
 import torch
 
 # Set device
@@ -11,7 +11,7 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 # Load the pretrained BLIP-2 model and processor
 model_name = "Salesforce/blip2-opt-2.7b"
 processor = Blip2Processor.from_pretrained(model_name)
-model = Blip2ForConditionalGeneration.from_pretrained(model_name, torch_dtype=torch.float16).to(device)
+model = Blip2ForConditionalGeneration.from_pretrained(model_name, torch_dtype=torch.float16).to(device)  # Changed to Blip2ForConditionalGeneration
 
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
@@ -86,10 +86,18 @@ try:
             if not image_name or not corresponding_text or not annotation:
                 results_file.write(f"Skipping row due to missing data: {row}\n")
                 results_file.flush()
+                all_emotions.append([])  # Add empty list as a placeholder
                 continue
 
-            image_path = get_image_path(image_directory, image_name)
-            identified_emotions = get_emotion(image_path, corresponding_text, same_character)
+            try:
+                image_path = get_image_path(image_directory, image_name)
+                identified_emotions = get_emotion(image_path, corresponding_text, same_character)
+            except (FileNotFoundError, UnidentifiedImageError) as e:
+                results_file.write(f"Skipping row due to error: {e}\n")
+                results_file.flush()
+                all_emotions.append([])  # Add empty list as a placeholder
+                continue
+            
             all_emotions.append(identified_emotions)
 
             is_correct = check_correctness(identified_emotions, annotation)
