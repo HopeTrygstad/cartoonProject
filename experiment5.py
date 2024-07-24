@@ -48,7 +48,7 @@ def get_emotion(image_path, corresponding_text, same_character):
             f"Said by same character?: {same_character}\n"
         )
 
-        inputs = processor(prompt, images=image, return_tensors="pt").to(device)
+        inputs = processor(images=image, text=prompt, return_tensors="pt").to(device)
         outputs = model.generate(**inputs, max_new_tokens=100)
         response = processor.decode(outputs[0], skip_special_tokens=True)
 
