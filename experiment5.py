@@ -1,8 +1,8 @@
 import csv
 import os
 import re
-from PIL import Image, UnidentifiedImageError
-from transformers import Blip2Processor, Blip2ForConditionalGeneration  # Changed to Blip2ForConditionalGeneration
+from PIL import Image
+from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
 
 # Set device
@@ -11,7 +11,7 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 # Load the pretrained BLIP-2 model and processor
 model_name = "Salesforce/blip2-opt-2.7b"
 processor = Blip2Processor.from_pretrained(model_name)
-model = Blip2ForConditionalGeneration.from_pretrained(model_name, torch_dtype=torch.float16).to(device)  # Changed to Blip2ForConditionalGeneration
+model = Blip2ForConditionalGeneration.from_pretrained(model_name, torch_dtype=torch.float16).to(device)
 
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
@@ -39,7 +39,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         prompt = (
             "Here is some text and an image. They are taken from a cartoon.\n"
             "The image is a frame from the cartoon with a character's face on it.\n"
-            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
+            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame.\n"
             "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
             "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
@@ -86,7 +86,6 @@ try:
             if not image_name or not corresponding_text or not annotation:
                 results_file.write(f"Skipping row due to missing data: {row}\n")
                 results_file.flush()
-                all_emotions.append([])  # Add empty list as a placeholder
                 continue
 
             try:
@@ -94,10 +93,10 @@ try:
                 identified_emotions = get_emotion(image_path, corresponding_text, same_character)
             except (FileNotFoundError, UnidentifiedImageError) as e:
                 results_file.write(f"Skipping row due to error: {e}\n")
-                results_file.flush()
                 all_emotions.append([])  # Add empty list as a placeholder
+                results_file.flush()
                 continue
-            
+
             all_emotions.append(identified_emotions)
 
             is_correct = check_correctness(identified_emotions, annotation)
