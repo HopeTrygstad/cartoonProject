@@ -2,7 +2,7 @@ import csv
 import os
 import re
 from PIL import Image
-from transformers import Blip2Processor, Blip2Model
+from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
 
 # Set device
@@ -11,7 +11,7 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 # Load the pretrained BLIP-2 model and processor
 model_name = "Salesforce/blip2-opt-2.7b"
 processor = Blip2Processor.from_pretrained(model_name)
-model = Blip2Model.from_pretrained(model_name, torch_dtype=torch.float16).to(device)
+model = Blip2ForConditionalGeneration.from_pretrained(model_name, torch_dtype=torch.float16).to(device)
 
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
