@@ -39,7 +39,7 @@ def get_emotion(image_path, corresponding_text, same_character):
         prompt = (
             "Here is some text and an image. They are taken from a cartoon.\n"
             "The image is a frame from the cartoon with a character's face on it.\n"
-            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame.\n"
+            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
             "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
             "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
@@ -59,6 +59,7 @@ def get_emotion(image_path, corresponding_text, same_character):
 
         return emotions_list
     except Exception as e:
+        print(f"Error processing {image_path}: {e}")  # Debugging statement
         return [f"Error: {e}"]
 
 # Function to check correctness of identified emotions
@@ -90,15 +91,8 @@ try:
                 results_file.flush()
                 continue
 
-            try:
-                image_path = get_image_path(image_directory, image_name)
-                identified_emotions = get_emotion(image_path, corresponding_text, same_character)
-            except (FileNotFoundError, UnidentifiedImageError) as e:
-                results_file.write(f"Skipping row due to error: {e}\n")
-                all_emotions.append([])  # Add empty list as a placeholder
-                results_file.flush()
-                continue
-
+            image_path = get_image_path(image_directory, image_name)
+            identified_emotions = get_emotion(image_path, corresponding_text, same_character)
             all_emotions.append(identified_emotions)
 
             is_correct = check_correctness(identified_emotions, annotation)
