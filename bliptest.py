@@ -40,13 +40,13 @@ def get_emotion(image_path, corresponding_text, same_character):
             "Here is some text and an image. They are taken from a cartoon.\n"
             "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "What are the emotions displayed? Answer with one or two emotions.\n"
+            "Label the emotions displayed. Answer with one or two emotions.\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
-        generated_ids = model.generate(**inputs, max_length=200, num_beams=5, early_stopping=True)
+        generated_ids = model.generate(**inputs, max_new_tokens=100)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
         if response:
@@ -59,6 +59,12 @@ def get_emotion(image_path, corresponding_text, same_character):
     except Exception as e:
         print(f"Error processing {image_path}: {e}")  # Debugging statement
         return [f"Error: {e}"]
+
+def check_correctness(identified_emotions, annotation):
+    if identified_emotions is None:
+        return False
+    annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
+    return any(emotion in identified_emotions for emotion in annotated_emotions)
 
 try:
     rows = get_all_rows(csv_file_path)
@@ -106,9 +112,3 @@ except Exception as e:
     with open("blip2Results.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
         results_file.flush()
-
-def check_correctness(identified_emotions, annotation):
-    if identified_emotions is None:
-        return False
-    annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
-    return any(emotion in identified_emotions for emotion in annotated_emotions)
