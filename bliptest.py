@@ -39,7 +39,7 @@ def get_emotion(image_path, corresponding_text):
         prompt = (
             f"Here is an image from a cartoon.\n"
             f"The dialogue was this: \"{corresponding_text}\"\n"
-            "Question: What are the emotions displayed? Choose 1 or 2: "
+            "What are the emotions displayed? Choose 1 or 2 emotions from this list: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             "Answer: "
         )
@@ -47,7 +47,7 @@ def get_emotion(image_path, corresponding_text):
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
         print(f"Inputs for image {image_path}: {inputs}")  # Debugging statement
 
-        generated_ids = model.generate(**inputs, max_new_tokens=100)
+        generated_ids = model.generate(**inputs, max_new_tokens=100, max_length=100)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
         print(f"Response for image {image_path}: {response}")  # Debugging statement
