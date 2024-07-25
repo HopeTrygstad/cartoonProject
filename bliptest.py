@@ -43,10 +43,10 @@ def get_emotion(image_path, corresponding_text, same_character):
             "What are the emotions displayed? Answer with one or two emotions.\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
-            f"Answer: \n"
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
+        print(f"Inputs for image {image_path}: {inputs}")  # Debugging statement
         generated_ids = model.generate(**inputs, max_new_tokens=300)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
