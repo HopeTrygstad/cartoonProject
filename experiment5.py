@@ -6,12 +6,12 @@ from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
 
 # Set device
-device = "cuda:0" 
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # Load the pretrained BLIP-2 model and processor
 model_name = "Salesforce/blip2-opt-2.7b"
 processor = Blip2Processor.from_pretrained(model_name)
-model = Blip2ForConditionalGeneration.from_pretrained(model_name, torch_dtype=torch.float16).to(device)
+model = Blip2ForConditionalGeneration.from_pretrained(model_name, load_in_8bit=True, device_map={"": 0}, torch_dtype=torch.float16)
 
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
@@ -48,9 +48,9 @@ def get_emotion(image_path, corresponding_text, same_character):
             f"Said by same character?: {same_character}\n"
         )
 
-        inputs = processor(images=image, text=prompt, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=100)
-        response = processor.decode(outputs[0], skip_special_tokens=True)
+        inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
+        generated_ids = model.generate(**inputs)
+        response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
         print(f"Response for image {image_path}: {response}")  # Debugging statement
 
