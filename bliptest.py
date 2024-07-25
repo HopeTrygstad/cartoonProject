@@ -1,6 +1,6 @@
 from PIL import Image
 import requests
-from transformers import Blip2Processor, Blip2ForConditionalGeneration
+from transformers import Blip2Processor, Blip2ForConditionalGeneration, BitsAndBytesConfig
 import torch
 import csv
 import os
@@ -9,8 +9,9 @@ import re
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
+quantization_config = BitsAndBytesConfig(load_in_8bit=True)
 model = Blip2ForConditionalGeneration.from_pretrained(
-    "Salesforce/blip2-opt-2.7b", load_in_8bit=True, device_map={"": 0}, torch_dtype=torch.float16
+    "Salesforce/blip2-opt-2.7b", quantization_config=quantization_config, device_map={"": 0}, torch_dtype=torch.float16
 )
 
 # Define the path to the CSV file and the image directory
@@ -45,14 +46,15 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
-        
-        # Debugging: print inputs
-        print(f"Inputs for image {image_path}: {inputs}")
-        
-        generated_ids = model.generate(**inputs, max_new_tokens=100)
+        generated_ids = model.generate(**inputs, max_length=200, num_beams=5, early_stopping=True)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
-        print(f"Response for image {image_path}: {response}")  # Debugging statement
+        if response:
+            print(f"Response for image {image_path}: {response}")  # Debugging statement
+        else:
+            print(f"No response for image {image_path}")
+
+        return response
 
     except Exception as e:
         print(f"Error processing {image_path}: {e}")  # Debugging statement
@@ -82,10 +84,10 @@ try:
                 continue
 
             image_path = get_image_path(image_directory, image_name)
-            response = get_emotion(image_path, corresponding_text, same_character)
-            all_emotions.append(response)
+            identified_emotions = get_emotion(image_path, corresponding_text, same_character)
+            all_emotions.append(identified_emotions)
 
-            is_correct = any(emotion in response for emotion in annotation.split(','))
+            is_correct = check_correctness(identified_emotions, annotation)
             if is_correct:
                 correct_count += 1
 
@@ -104,3 +106,9 @@ except Exception as e:
     with open("blip2Results.txt", "w") as results_file:
         results_file.write(f"Error: {e}\n")
         results_file.flush()
+
+def check_correctness(identified_emotions, annotation):
+    if identified_emotions is None:
+        return False
+    annotated_emotions = [emotion.strip() for emotion in annotation.split(',')]
+    return any(emotion in identified_emotions for emotion in annotated_emotions)
