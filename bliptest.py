@@ -46,7 +46,8 @@ def get_emotion(image_path, corresponding_text):
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
         print(f"Inputs for image {image_path}: {inputs}")  # Debugging statement
-        generated_ids = model.generate(**inputs, max_new_tokens=200)
+
+        generated_ids = model.generate(**inputs, max_length=200)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
         print(f"Response for image {image_path}: {response}")  # Debugging statement
