@@ -39,7 +39,7 @@ def get_emotion(image_path, corresponding_text):
         prompt = (
             f"Here is an image from a cartoon.\n"
             f"The dialogue was this: \"{corresponding_text}\"\n"
-            "Question: What are the emotions displayed? Choose 1 or 2 emotions from this list: "
+            "Question: What are the emotions displayed? Choose 1 or 2: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             "Answer: "
         )
