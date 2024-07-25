@@ -33,7 +33,7 @@ def get_image_path(image_directory, image_name):
     else:
         raise FileNotFoundError(f"Image '{image_path}' not found.")
 
-def get_emotion(image_path, corresponding_text, same_character):
+def get_emotion(image_path, corresponding_text):
     try:
         image = Image.open(image_path).convert("RGB")
         prompt = (
@@ -42,17 +42,19 @@ def get_emotion(image_path, corresponding_text, same_character):
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
             "What are the emotions displayed? Answer with one or two emotions.\n"
             f"Text: \"{corresponding_text}\"\n"
-            f"Said by same character?: {same_character}\n"
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
         print(f"Inputs for image {image_path}: {inputs}")  # Debugging statement
-        generated_ids = model.generate(**inputs, max_new_tokens=300)
+        generated_ids = model.generate(**inputs, max_new_tokens=200)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
         print(f"Response for image {image_path}: {response}")  # Debugging statement
 
-        return response
+        # Extract emotions from the response
+        emotions_list = re.findall(r'\b(Happiness|Anger|Sadness|Fear|Disgust|Surprise|Contempt)\b', response)
+
+        return emotions_list
 
     except Exception as e:
         print(f"Error processing {image_path}: {e}")  # Debugging statement
@@ -79,7 +81,6 @@ try:
             print(f"Processing row {idx+1}/{len(rows)}")
             image_name = row.get('Image Name', '').strip()
             corresponding_text = row.get('Corresponding Text', '').strip()
-            same_character = row.get('Said by same character?', '').strip()
             annotation = row.get('Annotation', '').strip()
 
             if not image_name or not corresponding_text or not annotation:
@@ -88,7 +89,7 @@ try:
                 continue
 
             image_path = get_image_path(image_directory, image_name)
-            identified_emotions = get_emotion(image_path, corresponding_text, same_character)
+            identified_emotions = get_emotion(image_path, corresponding_text)
             all_emotions.append(identified_emotions)
 
             is_correct = check_correctness(identified_emotions, annotation)
