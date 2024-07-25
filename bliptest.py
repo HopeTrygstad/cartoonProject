@@ -48,10 +48,15 @@ def get_emotion(image_path, corresponding_text, same_character):
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
-        generated_ids = model.generate(**inputs)
+        
+        if inputs['input_ids'].size(1) == 0:
+            raise ValueError("Input IDs are empty")
+        
+        generated_ids = model.generate(**inputs, max_new_tokens=100)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
         print(f"Response for image {image_path}: {response}")  # Debugging statement
+        return response
 
     except Exception as e:
         print(f"Error processing {image_path}: {e}")  # Debugging statement
@@ -81,6 +86,25 @@ try:
                 continue
 
             image_path = get_image_path(image_directory, image_name)
-            get_emotion(image_path, corresponding_text, same_character)
+            response = get_emotion(image_path, corresponding_text, same_character)
+            all_emotions.append(response)
+
+            is_correct = any(emotion in response for emotion in annotation.split(','))
+            if is_correct:
+                correct_count += 1
+
+            results_file.write(f"Processed {image_name} - Correct: {is_correct}\n")
+            results_file.flush()
+
+        total_rows = len(rows)
+        correct_percentage = (correct_count / total_rows) * 100
+
+        results_file.write(f"\nAll Detected Emotions: {all_emotions}\n")
+        results_file.write(f"Total Correct Identifications: {correct_count}/{total_rows}\n")
+        results_file.write(f"Percentage of Correct Identifications: {correct_percentage:.2f}%\n")
+        results_file.flush()
+
 except Exception as e:
-    print(f"Error in main execution: {e}")
+    with open("blip2Results.txt", "w") as results_file:
+        results_file.write(f"Error: {e}\n")
+        results_file.flush()
