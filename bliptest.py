@@ -6,13 +6,12 @@ import csv
 import os
 import re
 
-
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
 model = Blip2ForConditionalGeneration.from_pretrained(
     "Salesforce/blip2-opt-2.7b", load_in_8bit=True, device_map={"": 0}, torch_dtype=torch.float16
-)  # doctest: +IGNORE_RESULT
+)
 
 # Define the path to the CSV file and the image directory
 csv_file_path = 'cartoonData.csv'
@@ -58,7 +57,6 @@ def get_emotion(image_path, corresponding_text, same_character):
         print(f"Error processing {image_path}: {e}")  # Debugging statement
         return [f"Error: {e}"]
 
-
 try:
     rows = get_all_rows(csv_file_path)
     all_emotions = []
@@ -84,3 +82,5 @@ try:
 
             image_path = get_image_path(image_directory, image_name)
             get_emotion(image_path, corresponding_text, same_character)
+except Exception as e:
+    print(f"Error in main execution: {e}")
