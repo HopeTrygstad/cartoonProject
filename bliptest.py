@@ -39,9 +39,9 @@ def get_emotion(image_path, corresponding_text):
         prompt = (
             f"Here is an image from a cartoon.\n"
             f"The dialogue was this: \"{corresponding_text}\"\n"
-            "Label it with one or two of the following seven emotions: "
+            "Question: What are the emotions displayed? Choose 1 or 2 emotions from this list: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "What are the emotions displayed? Answer with one or two emotions."
+            "Answer: "
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
