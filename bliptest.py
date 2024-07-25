@@ -38,21 +38,19 @@ def get_emotion(image_path, corresponding_text, same_character):
         image = Image.open(image_path).convert("RGB")
         prompt = (
             "Here is some text and an image. They are taken from a cartoon.\n"
-            "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
+            "Your task is to take the image and text information, and label it with one or two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "Label the emotions displayed. Answer with one or two emotions.\n"
+            "What are the emotions displayed? Answer with one or two emotions.\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
+            f"Answer: \n"
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
-        generated_ids = model.generate(**inputs, max_new_tokens=100)
+        generated_ids = model.generate(**inputs, max_new_tokens=300)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
-        if response:
-            print(f"Response for image {image_path}: {response}")  # Debugging statement
-        else:
-            print(f"No response for image {image_path}")
+        print(f"Response for image {image_path}: {response}")  # Debugging statement
 
         return response
 
