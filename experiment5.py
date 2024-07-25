@@ -6,7 +6,7 @@ from transformers import Blip2Processor, Blip2ForConditionalGeneration
 import torch
 
 # Set device
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
+device = "cuda:0" 
 
 # Load the pretrained BLIP-2 model and processor
 model_name = "Salesforce/blip2-opt-2.7b"
