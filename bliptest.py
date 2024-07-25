@@ -6,7 +6,6 @@ import csv
 import os
 import re
 
-
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
@@ -38,18 +37,18 @@ def get_emotion(image_path, corresponding_text, same_character):
         image = Image.open(image_path).convert("RGB")
         prompt = (
             "Here is some text and an image. They are taken from a cartoon.\n"
-            "The image is a frame from the cartoon with a character's face on it.\n"
-            "The text is the piece of dialogue that was being said during the cartoon at the time of the frame. \n"
-            "'Said by same character?' indicates whether or not the text was said by the character in the image.\n"
             "Your task is to take the image and text information, and label it with a maximum of two of the following seven emotions: "
             "Happiness, Anger, Sadness, Fear, Disgust, Surprise, or Contempt.\n"
-            "Answer with only the emotion or emotions you identify, with a maximum of two emotions.\n\n"
+            "What are the emotions displayed? Answer with one or two emotions.\n"
             f"Text: \"{corresponding_text}\"\n"
             f"Said by same character?: {same_character}\n"
-            "What are the emotions displayed? Answer with one or two emotions."
         )
 
         inputs = processor(images=image, text=prompt, return_tensors="pt").to(device="cuda", dtype=torch.float16)
+        
+        # Debugging: print inputs
+        print(f"Inputs for image {image_path}: {inputs}")
+        
         generated_ids = model.generate(**inputs, max_new_tokens=100)
         response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
 
